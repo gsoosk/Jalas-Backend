@@ -1,7 +1,7 @@
 from django.contrib import admin
-from poll.data.models import PollChoiceItem
-from poll.data.models import MeetingPoll
-from poll.data.models import PollTime
+from poll.models import PollChoiceItem
+from poll.models import MeetingPoll
+from poll.models import PollTime
 
 
 admin.site.register(PollChoiceItem)

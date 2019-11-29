@@ -1,12 +1,11 @@
 
-from poll.data.models import MeetingPoll
+from poll.data.repo import get_polls, get_choices
 
 
 def get_all_polls_by_creator_name(creator_name):
-    # return ""
-    polls = MeetingPoll.objects.filter(creator__name=creator_name).select_related()
-    return polls
+    return get_polls(creator_name)
 
-# def get_polls_details(poll):
-#     choices =
+
+def get_poll_details(poll_title):
+    return get_choices(poll_title)
 
