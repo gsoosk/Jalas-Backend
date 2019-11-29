@@ -2,8 +2,8 @@ from django.db import models
 
 
 class PollTime(models.Model):
-    startDateTime = models.DateTimeField('Start time')
-    endDateTime = models.DateTimeField('End time')
+    start_date_time = models.DateTimeField('Start time')
+    end_date_time = models.DateTimeField('End time')
 
 
 class MeetingPoll(models.Model):
@@ -13,7 +13,7 @@ class MeetingPoll(models.Model):
 
 
 class PollChoiceItem(models.Model):
-    voters = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE)
+    voter = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE)
     poll = models.ForeignKey('MeetingPoll', on_delete=models.CASCADE)
-    chosenTime = models.ForeignKey('PollTime', on_delete=models.CASCADE)
+    chosen_time = models.ForeignKey('PollTime', on_delete=models.CASCADE)
 
