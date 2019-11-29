@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'meetings.apps.MeetingsConfig'
+    'meetings.apps.MeetingsConfig',
+    'poll.apps.PollConfig'
 ]
 
 MIDDLEWARE = [
