@@ -9,6 +9,7 @@ class PollTime(models.Model):
 class MeetingPoll(models.Model):
     title = models.CharField(max_length=100)
     choices = models.ManyToManyField('PollTime')
+    creator = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE)
 
 
 class PollChoiceItem(models.Model):
