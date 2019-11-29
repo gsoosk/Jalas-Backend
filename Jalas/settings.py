@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'meetings.apps.MeetingsConfig',
-    'poll.apps.PollConfig'
+    'poll.apps.PollConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,14 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 WSGI_APPLICATION = 'Jalas.wsgi.application'
 

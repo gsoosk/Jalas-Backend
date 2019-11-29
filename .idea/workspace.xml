@@ -2,12 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bfbe6431-2c64-4ef8-95df-7b6062be4702" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/poll/domain_logic/polls_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/poll/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/meetings/data/Room.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/meetings/data/repo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/meetings/domain_logic/meeting_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Jalas.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Jalas.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Jalas/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jalas/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Jalas/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jalas/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/poll/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/poll/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/poll/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/poll/presentation/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meetings/data/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meetings/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/meetings/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/data/Meeting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/poll/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/poll/migrations/0002_meetingpoll_creator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/poll/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/data/Participant.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,37 +40,55 @@
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="1329590892">
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="17" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="17" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="py" value="1153" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="1153" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/meetings/presentation/views.py">
+        <entry file="file://$PROJECT_DIR$/meetings/data/repo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="4" column="19" lean-forward="true" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+            <state relative-caret-position="135">
+              <caret line="9" column="18" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="18" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
+                <marker date="1575036501356" expanded="true" signature="150:222" ph="..." />
+                <marker date="1575036501356" expanded="true" signature="449:454" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/poll/domain_logic/polls_service.py">
+        <entry file="file://$PROJECT_DIR$/meetings/domain_logic/meeting_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="73" selection-start-line="7" selection-start-column="73" selection-end-line="7" selection-end-column="73" />
+            <state relative-caret-position="75">
+              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
               <folding>
-                <element signature="e#1#62#0" expanded="true" />
+                <marker date="1575036713050" expanded="true" signature="84:85" ph="..." />
+                <marker date="1575036713050" expanded="true" signature="84:117" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/query.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="1283" selection-start-line="1283" selection-end-line="1283" />
             </state>
           </provider>
         </entry>
@@ -70,8 +96,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Jalas/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="21" column="15" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
+            <state relative-caret-position="315">
+              <caret line="21" column="42" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
               <folding>
                 <element signature="e#629#661#0" expanded="true" />
               </folding>
@@ -80,36 +106,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/poll/presentation/views.py">
+        <entry file="file://$PROJECT_DIR$/meetings/data/Room.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="46" selection-start-line="7" selection-start-column="46" selection-end-line="7" selection-end-column="46" />
+            <state relative-caret-position="15">
+              <caret line="1" column="33" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="73" />
               <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/poll/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="5" column="28" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/meetings/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="1" lean-forward="true" selection-end-line="6" selection-end-column="1" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
+                <marker date="1575034308247" expanded="true" signature="87:88" ph="..." />
               </folding>
             </state>
           </provider>
@@ -118,26 +120,43 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/meetings/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="10" column="11" lean-forward="true" selection-start-line="10" selection-start-column="11" selection-end-line="10" selection-end-column="11" />
+            <state>
+              <caret column="28" lean-forward="true" selection-start-column="28" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Jalas/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="78" column="1" selection-start-line="78" selection-start-column="1" selection-end-line="78" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/poll/models.py">
+        <entry file="file://$PROJECT_DIR$/meetings/data/Participant.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="53" />
+            <state>
+              <caret column="18" selection-start-column="18" selection-end-column="18" />
+              <folding>
+                <marker date="1575036052061" expanded="true" signature="57:58" ph="..." />
+                <marker date="1575036052061" expanded="true" signature="57:66" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/fields/__init__.py">
+        <entry file="file://$PROJECT_DIR$/meetings/data/Meeting.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="477">
-              <caret line="121" column="4" selection-start-line="121" selection-start-column="4" selection-end-line="121" selection-end-column="4" />
+            <state relative-caret-position="105">
+              <caret line="7" selection-start-line="7" selection-end-line="7" />
+              <folding>
+                <marker date="1575032866921" expanded="true" signature="97:98" ph="..." />
+                <marker date="1575032866921" expanded="true" signature="97:106" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -151,6 +170,13 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Installed</find>
+      <find>urlpatterns</find>
+      <find>REST_FRA</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -161,21 +187,33 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/Jalas/amdin.py" />
         <option value="$PROJECT_DIR$/meetings/admin.py" />
-        <option value="$PROJECT_DIR$/meetings/models.py" />
-        <option value="$PROJECT_DIR$/Jalas/settings.py" />
         <option value="$PROJECT_DIR$/poll/admin.py" />
         <option value="$PROJECT_DIR$/meetings/urls.py" />
         <option value="$PROJECT_DIR$/poll/models.py" />
         <option value="$PROJECT_DIR$/meetings/presentation/views.py" />
         <option value="$PROJECT_DIR$/poll/presentation/views.py" />
         <option value="$PROJECT_DIR$/poll/urls.py" />
-        <option value="$PROJECT_DIR$/Jalas/urls.py" />
         <option value="$PROJECT_DIR$/poll/domain_logic/polls_service.py" />
+        <option value="$PROJECT_DIR$/meetings/data/models.py" />
+        <option value="$PROJECT_DIR$/meetings/data/Meeting.py" />
+        <option value="$PROJECT_DIR$/meetings/models.py" />
+        <option value="$PROJECT_DIR$/meetings/data/Room.py" />
+        <option value="$PROJECT_DIR$/meetings/data/Participant.py" />
+        <option value="$PROJECT_DIR$/meetings/data/repo.py" />
+        <option value="$PROJECT_DIR$/meetings/domain_logic/meeting_service.py" />
+        <option value="$PROJECT_DIR$/Jalas/urls.py" />
+        <option value="$PROJECT_DIR$/Jalas/settings.py" />
       </list>
     </option>
   </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
+    <option name="width" value="714" />
     <option name="height" value="900" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -184,51 +222,57 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
               <item name="Jalas" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
               <item name="meetings" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
+              <item name="meetings" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
               <item name="meetings" type="462c0819:PsiDirectoryNode" />
               <item name="domain_logic" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
-              <item name="meetings" type="462c0819:PsiDirectoryNode" />
-              <item name="presentation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
               <item name="poll" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Jalas" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Jalas" type="462c0819:PsiDirectoryNode" />
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
               <item name="poll" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="jalas-backend" type="b2602c69:ProjectViewProjectNode" />
+              <item name="jalas-backend" type="462c0819:PsiDirectoryNode" />
+              <item name="poll" type="462c0819:PsiDirectoryNode" />
+              <item name="domain_logic" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -247,6 +291,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/meetings" />
       <recent name="$PROJECT_DIR$/poll/presentation" />
       <recent name="$PROJECT_DIR$/meetings/presentation" />
     </key>
@@ -310,6 +355,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -335,6 +381,31 @@
       <window_info anchor="right" id="R Graphics" order="5" />
       <window_info anchor="right" id="R Packages" order="6" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32891566" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.35301206" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32891566" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="Database" order="4" weight="0.3297568" />
+      <window_info anchor="right" id="R Graphics" order="5" />
+      <window_info anchor="right" id="R Packages" order="6" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -354,13 +425,6 @@
     <entry file="file://$PROJECT_DIR$/meetings/apps.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Jalas/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="38" column="33" selection-start-line="38" selection-start-column="33" selection-end-line="38" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/meetings/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
@@ -373,7 +437,7 @@
     </entry>
     <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/fields/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
+        <state relative-caret-position="1815">
           <caret line="121" column="4" selection-start-line="121" selection-start-column="4" selection-end-line="121" selection-end-column="4" />
         </state>
       </provider>
@@ -390,7 +454,7 @@
     </entry>
     <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/fields/related.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-31">
+        <state relative-caret-position="10905">
           <caret line="758" column="6" selection-start-line="758" selection-start-column="6" selection-end-line="758" selection-end-column="6" />
         </state>
       </provider>
@@ -415,16 +479,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/meetings/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="1" lean-forward="true" selection-end-line="6" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/poll/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -435,44 +489,120 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Jalas/urls.py">
+    <entry file="file://$PROJECT_DIR$/meetings/models.py" />
+    <entry file="file://$PROJECT_DIR$/poll/models.py" />
+    <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/query.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="15" selection-start-line="21" selection-start-column="15" selection-end-line="21" selection-end-column="15" />
+        <state relative-caret-position="443">
+          <caret line="1283" selection-start-line="1283" selection-end-line="1283" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meetings/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="1" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
           <folding>
-            <element signature="e#629#661#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/data/Poll.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/domain_logic/polls_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="15" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/data/repo.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/poll/data/models.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meetings/domain_logic/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meetings/data/Meeting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <marker date="1575032866921" expanded="true" signature="97:98" ph="..." />
+            <marker date="1575032866921" expanded="true" signature="97:106" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meetings/data/Participant.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="18" selection-start-column="18" selection-end-column="18" />
+          <folding>
+            <marker date="1575036052061" expanded="true" signature="57:58" ph="..." />
+            <marker date="1575036052061" expanded="true" signature="57:66" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/meetings/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="11" lean-forward="true" selection-start-line="10" selection-start-column="11" selection-end-line="10" selection-end-column="11" />
+        <state>
+          <caret column="28" lean-forward="true" selection-start-column="28" selection-end-column="28" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/poll/models.py">
+    <entry file="file://$PROJECT_DIR$/meetings/data/Room.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="42" selection-start-line="11" selection-start-column="42" selection-end-line="11" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/poll/domain_logic/polls_service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="73" selection-start-line="7" selection-start-column="73" selection-end-line="7" selection-end-column="73" />
+        <state relative-caret-position="15">
+          <caret line="1" column="33" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="73" />
           <folding>
-            <element signature="e#1#62#0" expanded="true" />
+            <marker date="1575034308247" expanded="true" signature="87:88" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python3.7/site-packages/django/db/models/query.py">
+    <entry file="file://$PROJECT_DIR$/meetings/data/repo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="1283" selection-start-line="1283" selection-end-line="1283" />
+        <state relative-caret-position="135">
+          <caret line="9" column="18" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <marker date="1575036501356" expanded="true" signature="150:222" ph="..." />
+            <marker date="1575036501356" expanded="true" signature="449:454" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meetings/domain_logic/meeting_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+          <folding>
+            <marker date="1575036713050" expanded="true" signature="84:85" ph="..." />
+            <marker date="1575036713050" expanded="true" signature="84:117" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Jalas/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="42" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
+          <folding>
+            <element signature="e#629#661#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Jalas/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="78" column="1" selection-start-line="78" selection-start-column="1" selection-end-line="78" selection-end-column="1" />
         </state>
       </provider>
     </entry>
