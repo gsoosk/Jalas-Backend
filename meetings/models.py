@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Room(models.Model):
-    room_name = models.CharField(max_length=100)
+    room_name = models.IntegerField()
     capacity = models.IntegerField(default=0)
     location = models.CharField(max_length=200, default="")
     has_video_projector = models.BooleanField(default=False)
