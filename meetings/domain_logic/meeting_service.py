@@ -1,5 +1,5 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting
+from meetings.data.repo import create_meeting, cancel_meeting
 import requests
 import json
 from meetings import Exceptions
@@ -8,6 +8,10 @@ from meetings.domain_logic.email_service import send_email
 
 def is_time_valid(start, end):
     return end > start
+
+
+def cancel_room_reservation(meeting_id):
+    cancel_meeting(meeting_id)
 
 
 def send_reserve_request(start, end, room_name):

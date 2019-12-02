@@ -1,6 +1,7 @@
 from meetings.models import Meeting
 from meetings.models import Room
 from meetings.models import Participant
+from meetings import Exceptions
 
 
 def check_if_room_exists(meeting_room):
@@ -21,3 +22,12 @@ def create_meeting(meeting_info):
         meeting.participants.add(person)
 
     meeting.save()
+
+
+def cancel_meeting(meeting_id):
+    if Meeting.objects.filter(id=meeting_id):
+        meeting = Meeting.objects.filter(id=meeting_id)
+        meeting.is_cancelled = True
+        meeting.save()
+    else:
+        raise Exceptions.MeetingNotFound

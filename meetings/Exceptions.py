@@ -28,3 +28,7 @@ class RoomNotFound(Exception):
 
 class EmailCouldNotBeSent(Exception):
     pass
+
+
+class MeetingNotFound(Exception):
+    pass

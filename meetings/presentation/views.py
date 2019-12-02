@@ -1,6 +1,6 @@
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
-from meetings.domain_logic.meeting_service import create_new_meeting
+from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -44,3 +44,15 @@ def get_available_rooms(request):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Time Is Invalid"})
 
     return Response({"rooms": list(rooms.keys())}, status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def cancel_reservation(request):
+    if 'meeting_id' not in request.data.keys():
+        return Response({"message": "No id in request"}, status=status.HTTP_400_BAD_REQUEST)
+    data = request.data
+    try:
+        cancel_room_reservation(data['meeting_id'])
+    except Exceptions.MeetingNotFound:
+        return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
+
