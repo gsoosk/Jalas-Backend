@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
-import threading
+from meetings.domain_logic.meeting_service import reserving
 
 
 @api_view(['POST'])
@@ -21,8 +21,7 @@ def create_meeting(request):
         meeting = Meeting(serializer.data['title'], serializer.data['start_date_time'],
                           serializer.data['end_date_time'], room, participants)
         try:
-            create_new_meeting(meeting)
-
+            meeting_id, reserved = create_new_meeting(meeting)
         except Exceptions.InvalidParticipantInfo:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED,
                             data={"message": "At least one participant is not valid."})
@@ -33,7 +32,7 @@ def create_meeting(request):
         except Exceptions.RoomIsNotAvailable as e :
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Is Not Available"})
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'id':meeting_id, 'reserved':reserved}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -46,6 +45,8 @@ def get_available_rooms(request):
         rooms = get_available_rooms_service(data['start_date_time']+'Z', data['end_date_time']+'Z')
     except Exceptions.RoomTimeInvalid as e:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Time Is Invalid"})
+    except:
+        return Response(status=status.HTTP_423_LOCKED, data={"message":"Server Is Down"})
 
     return Response({"rooms": list(rooms.keys())}, status.HTTP_200_OK)
 
@@ -56,7 +57,10 @@ def cancel_reservation(request):
         return Response({"message": "No id in request"}, status=status.HTTP_400_BAD_REQUEST)
     data = request.data
     try:
+        if not reserving:
+            return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
         cancel_room_reservation(data['meeting_id'])
+        return Response(status=status.HTTP_200_OK)
     except Exceptions.MeetingNotFound:
         return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
 
