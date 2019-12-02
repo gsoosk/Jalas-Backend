@@ -1,4 +1,6 @@
 class MeetingPoll:
-    def __init__(self, title, choices, creator):
+    def __init__(self, title):
         self.title = title
-        self.creator = creator
+
+    def get_title(self):
+        return self.title
