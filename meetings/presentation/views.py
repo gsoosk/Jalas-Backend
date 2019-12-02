@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
+import threading
 
 
 @api_view(['POST'])
