@@ -7,7 +7,7 @@ from meetings import Exceptions
 def get_meeting_status_by_id(meeting_id):
     if Meeting.objects.filter(id=meeting_id):
         meeting = Meeting.objects.filter(id=meeting_id)
-        return meeting.is_cancelled
+        return meeting[0].is_cancelled
 
 
 def check_if_room_exists(meeting_room):
@@ -33,7 +33,7 @@ def create_meeting(meeting_info):
 
 def cancel_meeting(meeting_id):
     if Meeting.objects.filter(id=meeting_id):
-        meeting = Meeting.objects.filter(id=meeting_id)
+        meeting = Meeting.objects.filter(id=meeting_id)[0]
         meeting.is_cancelled = True
         meeting.save()
     else:

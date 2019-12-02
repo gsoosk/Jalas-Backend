@@ -7,8 +7,7 @@ from meetings.domain_logic.email_service import send_email
 import _thread as thread
 from reports.domain_logic.Reports import ReportsData
 
-cancel_numbers = 0
-reserving = False
+
 
 def is_time_valid(start, end):
     return end > start
@@ -18,14 +17,6 @@ def cancel_room_reservation(meeting_id):
     cancel_meeting(meeting_id)
     # cancel_numbers += 1
 
-def reserving():
-    return reserving
-
-def inc_cancel():
-    # cancel_numbers = cancel_numbers + 1
-
-def get_cancel():
-    return cancel_numbers
 
 def send_reserve_request(start, end, room_name):
     while True:
@@ -97,14 +88,15 @@ def check_participants_valid(participants):
     raise Exceptions.InvalidParticipantInfo()
 
 
-def send_email(start, end, room_name):
+def send_email_thread(start, end, room_name):
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
-               + start + " - " + end +
-               "\nRoom: " + room_name + "\n", ["qsoosk@gmail.com,"])
+               + start + " - "
+               + end +"\nRoom: "
+               + room_name + "\n", ["qsoosk@gmail.com"])
 
 
 def reserve_until_cancel(start, end, room_name, meeting_id):
-    reserving = True
+    ReportsData.get_instance().reserving = True
     while not get_meeting_status_by_id(meeting_id):
         try:
             reserve_room(start, end, room_name)
@@ -112,9 +104,10 @@ def reserve_until_cancel(start, end, room_name, meeting_id):
         except requests.Timeout as e:
             pass
         except e:
-            reserving = False
+            ReportsData.get_instance().reserving = False
             raise e
-    reserving = False
+    print("reserved")
+    ReportsData.get_instance().reserving = False
 
 def create_new_meeting(new_meeting):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
@@ -122,7 +115,7 @@ def create_new_meeting(new_meeting):
     check_participants_valid(new_meeting.participants)
     meeting_id = create_meeting(new_meeting)
     # Sending Mail
-    thread.start_new_thread(send_email, (str(new_meeting.start_date_time), str(new_meeting.end_date_time),
+    thread.start_new_thread(send_email_thread, (str(new_meeting.start_date_time), str(new_meeting.end_date_time),
                                          str(new_meeting.room.room_name)))
     # Reserving
     try :
@@ -131,7 +124,4 @@ def create_new_meeting(new_meeting):
     except requests.Timeout as e:
         thread.start_new_thread(reserve_until_cancel, (new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room, meeting_id))
         return meeting_id, False
-
-
-
 

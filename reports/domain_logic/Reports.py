@@ -4,6 +4,7 @@ import datetime
 class ReportsData:
     __instance = None
 
+
     @staticmethod
     def get_instance():
         if ReportsData.__instance is None:
@@ -19,10 +20,14 @@ class ReportsData:
             self.num_canceled_or_modified_meetings = 0
             self.num_reserved_rooms = 0
             self.req_time = {}
+            self.reserving = False
             ReportsData.__instance = self
 
     def add_meeting_creation_time(self, session_key):
         self.req_time[session_key] = datetime.datetime.now()
+
+    def inc_canceled(self, session_key):
+        self.num_canceled_or_modified_meetings += 1
 
     def finalize_meeting_time(self, session_key):
         creation_time = (datetime.datetime.now() - self.req_time[session_key]).seconds

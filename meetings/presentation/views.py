@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
-from meetings.domain_logic.meeting_service import reserving
 from reports.domain_logic.Reports import ReportsData
 
 
@@ -59,7 +58,7 @@ def cancel_reservation(request):
         return Response({"message": "No id in request"}, status=status.HTTP_400_BAD_REQUEST)
     data = request.data
     try:
-        if not reserving:
+        if not ReportsData.get_instance().reserving:
             return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
         cancel_room_reservation(data['meeting_id'])
         return Response(status=status.HTTP_200_OK)
