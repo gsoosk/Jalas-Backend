@@ -25,7 +25,7 @@ def get_polls(request):
 def get_poll_details(request, poll_id=0):
     try:
         output = get_poll_details_by_poll_id(poll_id)
-        ReportsData.add_meeting_creation_time(request.session.session_key)
+        ReportsData.get_instance().add_meeting_creation_time(request.session.session_key)
         return Response(output, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
