@@ -32,3 +32,7 @@ class EmailCouldNotBeSent(Exception):
 
 class MeetingNotFound(Exception):
     pass
+
+
+class InvalidParticipantInfo(Exception):
+    pass

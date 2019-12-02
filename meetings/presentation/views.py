@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
+import threading
 
 
 @api_view(['POST'])
@@ -21,6 +22,9 @@ def create_meeting(request):
                           serializer.data['end_date_time'], room, participants)
         try:
             create_new_meeting(meeting)
+        except Exceptions.InvalidParticipantInfo:
+            return Response(status=status.HTTP_412_PRECONDITION_FAILED,
+                            data={"message": "At least one participant is not valid."})
         except Exceptions.RoomCanNotBeReserved as e :
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Reserved Already"})
         except Exceptions.RoomTimeInvalid as e:
