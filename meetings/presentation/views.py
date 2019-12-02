@@ -61,3 +61,12 @@ def cancel_reservation(request):
     except Exceptions.MeetingNotFound:
         return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
+@api_view(['GET'])
+def get_report(request):
+    report = ReportsData.get_instance()
+    average = 0
+    if report.num_created_meetings > 0:
+        average = report.sum_meeting_creation_time / report.num_created_meetings
+
+    return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms), "Number of cancelled/modified meetings": str(report.num_canceled_or_modified_meetings)})
