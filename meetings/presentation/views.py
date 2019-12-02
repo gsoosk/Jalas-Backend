@@ -61,6 +61,7 @@ def cancel_reservation(request):
         if not ReportsData.get_instance().reserving:
             return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
         cancel_room_reservation(data['meeting_id'])
+        ReportsData.get_instance().inc_canceled(request.session.session_key)
         return Response(status=status.HTTP_200_OK)
     except Exceptions.MeetingNotFound:
         return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
