@@ -27,6 +27,7 @@ class ReportsData:
     def finalize_meeting_time(self, session_key):
         creation_time = (datetime.datetime.now() - self.req_time[session_key]).seconds
         self.sum_meeting_creation_time += creation_time
+        self.num_created_meetings += 1
 
     def get_avg_meeting_creation_time(self):
         return self.sum_meeting_creation_time / self.num_created_meetings

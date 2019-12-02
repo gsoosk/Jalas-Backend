@@ -1,6 +1,6 @@
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
-from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, create_meeting_time
+from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -23,7 +23,7 @@ def create_meeting(request):
                           serializer.data['end_date_time'], room, participants)
         try:
             create_new_meeting(meeting)
-            ReportsData.finalize_meeting_time(request.session.session_key)
+            ReportsData.get_instance().finalize_meeting_time(request.session.session_key)
         except Exceptions.InvalidParticipantInfo:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED,
                             data={"message": "At least one participant is not valid."})
