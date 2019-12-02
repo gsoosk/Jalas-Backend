@@ -1,6 +1,6 @@
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
-from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation
+from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, create_meeting_time
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -21,13 +21,12 @@ def create_meeting(request):
                           serializer.data['end_date_time'], room, participants)
         try:
             create_new_meeting(meeting)
-
         except Exceptions.RoomCanNotBeReserved as e :
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message" : "Room Reserved Already"})
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Reserved Already"})
         except Exceptions.RoomTimeInvalid as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"message" : "Time Is Invalid"})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Time Is Invalid"})
         except Exceptions.RoomIsNotAvailable as e :
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message" : "Room Is Not Available"})
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Is Not Available"})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -4,21 +4,26 @@ from django.http import HttpResponse
 from poll.presentation.serializers import MeetingPollSerializer, ParticipantSerializer, PollChoiceItemSerializer
 from django.http import HttpResponse, JsonResponse
 import json
+from django.utils.timezone import now
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.core import serializers
 
 
 @api_view(['GET'])
 def get_polls(request):
     user_id = request.GET['user']
-    output = get_all_polls_by_creator_name(user_id)
-    return Response(output, status=status.HTTP_200_OK)
+    try:
+        output = get_all_polls_by_creator_name(user_id)
+        return Response(output, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])
 def get_poll_details(request, poll_id=0):
-    output = get_poll_details_by_poll_id(poll_id)
-    return Response(output, status=status.HTTP_200_OK)
-
+    try:
+        output = get_poll_details_by_poll_id(poll_id)
+        return Response(output, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)

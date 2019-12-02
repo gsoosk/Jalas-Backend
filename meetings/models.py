@@ -20,4 +20,3 @@ class Meeting(models.Model):
     room = models.ForeignKey('Room', null=True, on_delete=models.SET_NULL)
     participants = models.ManyToManyField('Participant')
     is_cancelled = models.BooleanField(default=False)
-

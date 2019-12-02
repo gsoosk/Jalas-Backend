@@ -1,5 +1,5 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting, cancel_meeting
+from meetings.data.repo import create_meeting, cancel_meeting, create_meeting_creation_time
 import requests
 import json
 from meetings import Exceptions
@@ -80,3 +80,4 @@ def create_new_meeting(new_meeting):
                + str(new_meeting.start_date_time) + " - " + str(new_meeting.end_date_time) +
                "\nRoom: " + str(new_meeting.room.room_name) + "\n", ["qsoosk@gmail.com,"])
     create_meeting(new_meeting)
+
