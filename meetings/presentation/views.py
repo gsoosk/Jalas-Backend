@@ -8,6 +8,7 @@ from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from meetings.domain_logic.meeting_service import reserving
+from reports.domain_logic.Reports import ReportsData
 
 
 @api_view(['POST'])
@@ -22,6 +23,7 @@ def create_meeting(request):
                           serializer.data['end_date_time'], room, participants)
         try:
             meeting_id, reserved = create_new_meeting(meeting)
+            ReportsData.get_instance().finalize_meeting_time(request.session.session_key)
         except Exceptions.InvalidParticipantInfo:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED,
                             data={"message": "At least one participant is not valid."})

@@ -5,6 +5,7 @@ import json
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
+from reports.domain_logic.Reports import ReportsData
 
 cancel_numbers = 0
 reserving = False
@@ -43,6 +44,8 @@ def send_reserve_request(start, end, room_name):
             elif available_rooms.status_code == 500:
                 raise Exceptions.RoomServiceInternalError()
             elif available_rooms.status_code == 200:
+                report = ReportsData.get_instance()
+                report.num_reserved_rooms += 1
                 return
         except Exceptions.RoomCanNotBeReserved as e:
             raise e
