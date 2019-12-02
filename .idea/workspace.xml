@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bfbe6431-2c64-4ef8-95df-7b6062be4702" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/meetings/Exceptions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meetings/domain_logic/meeting_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/domain_logic/meeting_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meetings/presentation/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/presentation/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/meetings/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/meetings/urls.py" afterDir="false" />
-    </list>
+    <list default="true" id="bfbe6431-2c64-4ef8-95df-7b6062be4702" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

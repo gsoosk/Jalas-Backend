@@ -33,6 +33,7 @@ def create_meeting(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 def get_available_rooms(request):
     if 'start_date_time' not in request.data.keys() or 'end_date_time' not in request.data.keys() :
