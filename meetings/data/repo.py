@@ -28,6 +28,7 @@ def create_meeting(meeting_info):
         meeting.participants.add(person)
 
     meeting.save()
+    return meeting.id
 
 
 def cancel_meeting(meeting_id):

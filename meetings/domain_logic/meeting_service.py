@@ -4,8 +4,11 @@ import requests
 import json
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
+import _thread as thread
 from reports.domain_logic.Reports import ReportsData
 
+cancel_numbers = 0
+reserving = False
 
 def is_time_valid(start, end):
     return end > start
@@ -13,16 +16,25 @@ def is_time_valid(start, end):
 
 def cancel_room_reservation(meeting_id):
     cancel_meeting(meeting_id)
+    # cancel_numbers += 1
 
+def reserving():
+    return reserving
 
-def send_reserve_request(start, end, room_name, meeting_id=-1):
-    while not get_meeting_status_by_id(meeting_id):
+def inc_cancel():
+    # cancel_numbers = cancel_numbers + 1
+
+def get_cancel():
+    return cancel_numbers
+
+def send_reserve_request(start, end, room_name):
+    while True:
         try:
             available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json={
                                             "username": "rkhosravi",
                                             "start": start[:-1],
                                             "end": end[:-1],
-                                            })
+                                            }, timeout=2)
             if available_rooms.status_code == 404:
                 raise Exceptions.RoomCanNotBeReserved()
             if available_rooms.status_code == 400:
@@ -39,6 +51,8 @@ def send_reserve_request(start, end, room_name, meeting_id=-1):
             raise e
         except Exceptions.RoomTimeInvalid as e:
             raise e
+        except requests.Timeout as e:
+            raise e
         except:
             pass
 
@@ -47,7 +61,7 @@ def get_available_rooms_service(start, end):
     while True:
         try:
             available_rooms = requests.get(url='http://213.233.176.40/available_rooms' +
-                                               '?start=' + start[:-1] + '&end=' + end[:-1])
+                                               '?start=' + start[:-1] + '&end=' + end[:-1], timeout=3)
             if available_rooms.status_code == 400:
                 response = json.loads(available_rooms.text)
                 raise Exceptions.RoomTimeInvalid(response['message'])
@@ -63,6 +77,8 @@ def get_available_rooms_service(start, end):
                     rooms[room_name] = new_room
                 return rooms
         except Exceptions.RoomTimeInvalid as e:
+            raise e
+        except requests.Timeout as e:
             raise e
         except:
             pass
@@ -81,13 +97,41 @@ def check_participants_valid(participants):
     raise Exceptions.InvalidParticipantInfo()
 
 
+def send_email(start, end, room_name):
+    send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
+               + start + " - " + end +
+               "\nRoom: " + room_name + "\n", ["qsoosk@gmail.com,"])
+
+
+def reserve_until_cancel(start, end, room_name, meeting_id):
+    reserving = True
+    while not get_meeting_status_by_id(meeting_id):
+        try:
+            reserve_room(start, end, room_name)
+            break
+        except requests.Timeout as e:
+            pass
+        except e:
+            reserving = False
+            raise e
+    reserving = False
+
 def create_new_meeting(new_meeting):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
         raise Exceptions.RoomTimeInvalid(Exceptions.TIME_ERROR)
     check_participants_valid(new_meeting.participants)
-    create_meeting(new_meeting)
-    reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
-    send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
-               + str(new_meeting.start_date_time) + " - " + str(new_meeting.end_date_time) +
-               "\nRoom: " + str(new_meeting.room.room_name) + "\n", ["qsoosk@gmail.com,"])
+    meeting_id = create_meeting(new_meeting)
+    # Sending Mail
+    thread.start_new_thread(send_email, (str(new_meeting.start_date_time), str(new_meeting.end_date_time),
+                                         str(new_meeting.room.room_name)))
+    # Reserving
+    try :
+        reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
+        return meeting_id, True
+    except requests.Timeout as e:
+        thread.start_new_thread(reserve_until_cancel, (new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room, meeting_id))
+        return meeting_id, False
+
+
+
 
