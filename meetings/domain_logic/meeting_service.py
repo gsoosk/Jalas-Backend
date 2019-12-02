@@ -1,5 +1,5 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting, cancel_meeting
+from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, check_if_participants_are_valid
 import requests
 import json
 from meetings import Exceptions
@@ -14,8 +14,8 @@ def cancel_room_reservation(meeting_id):
     cancel_meeting(meeting_id)
 
 
-def send_reserve_request(start, end, room_name):
-    while True:
+def send_reserve_request(start, end, room_name, meeting_id=-1):
+    while not get_meeting_status_by_id(meeting_id):
         try:
             available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json={
                                             "username": "rkhosravi",
@@ -72,11 +72,19 @@ def reserve_room(start, end, room):
     send_reserve_request(start, end, room.room_name)
 
 
+def check_participants_valid(participants):
+    if check_if_participants_are_valid(participants):
+        return
+    raise Exceptions.InvalidParticipantInfo()
+
+
 def create_new_meeting(new_meeting):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
         raise Exceptions.RoomTimeInvalid(Exceptions.TIME_ERROR)
+    check_participants_valid(new_meeting.participants)
+    create_meeting(new_meeting)
     reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
                + str(new_meeting.start_date_time) + " - " + str(new_meeting.end_date_time) +
                "\nRoom: " + str(new_meeting.room.room_name) + "\n", ["qsoosk@gmail.com,"])
-    create_meeting(new_meeting)
+

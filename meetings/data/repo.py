@@ -4,6 +4,12 @@ from meetings.models import Participant
 from meetings import Exceptions
 
 
+def get_meeting_status_by_id(meeting_id):
+    if Meeting.objects.filter(id=meeting_id):
+        meeting = Meeting.objects.filter(id=meeting_id)
+        return meeting.is_cancelled
+
+
 def check_if_room_exists(meeting_room):
     return Room.objects.filter(room_name=meeting_room.room_name).exists()
 
@@ -31,3 +37,12 @@ def cancel_meeting(meeting_id):
         meeting.save()
     else:
         raise Exceptions.MeetingNotFound
+
+
+def check_if_participants_are_valid(participants):
+    for participant_id in participants:
+        if not Participant.objects.filter(id=participant_id):
+            return False
+
+    return True
+
