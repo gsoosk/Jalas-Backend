@@ -9,10 +9,6 @@ from poll.data.PollChoiceItem import PollChoiceItemRep
 def get_polls(creator_id):
 
     polls= MeetingPoll.objects.filter(creator__id=creator_id)
-    # print([p.title for p in polls_models])
-    # for p in polls_models:
-    #     polls.append(MeetingPollsRep(p.title))
-    # return polls
     output = {'creator_id': creator_id, 'polls': [p.title for p in polls]}
     return output
 
