@@ -1,6 +1,6 @@
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
-from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, create_meeting_time
+from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response

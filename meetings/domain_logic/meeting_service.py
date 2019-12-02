@@ -4,6 +4,7 @@ import requests
 import json
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
+from reports.domain_logic.Reports import ReportsData
 
 
 def is_time_valid(start, end):
@@ -31,6 +32,8 @@ def send_reserve_request(start, end, room_name, meeting_id=-1):
             elif available_rooms.status_code == 500:
                 raise Exceptions.RoomServiceInternalError()
             elif available_rooms.status_code == 200:
+                report = ReportsData.get_instance()
+                report.num_reserved_rooms += 1
                 return
         except Exceptions.RoomCanNotBeReserved as e:
             raise e
