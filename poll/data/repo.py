@@ -38,9 +38,9 @@ def get_choices(poll_id):
             pos_voters = []
             neg_voters = []
             if c.agrees:
-                pos_voters.append(c.id)
+                pos_voters.append(c.voter.id)
             else:
-                neg_voters.append(c.id)
+                neg_voters.append(c.voter.id)
             choices.append(PollChoiceItemRep(pos_voters, neg_voters, start, end))
 
     output = {'id': poll_id, 'choices': [c.toJson() for c in choices]}
