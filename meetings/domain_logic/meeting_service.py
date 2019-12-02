@@ -2,8 +2,8 @@ from meetings.data.Room import Room
 from meetings.data.repo import create_meeting
 import requests
 import json
-import time
 from meetings import Exceptions
+from meetings.domain_logic.email_service import send_email
 
 
 def is_time_valid(start, end):
@@ -13,7 +13,7 @@ def is_time_valid(start, end):
 def send_reserve_request(start, end, room_name):
     while True:
         try:
-            available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json = {
+            available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json={
                                             "username": "rkhosravi",
                                             "start": start[:-1],
                                             "end": end[:-1],
@@ -40,7 +40,7 @@ def get_available_rooms_service(start, end):
     while True:
         try:
             available_rooms = requests.get(url='http://213.233.176.40/available_rooms' +
-                                                 '?start=' + start[:-1] + '&end=' + end[:-1])
+                                               '?start=' + start[:-1] + '&end=' + end[:-1])
             if available_rooms.status_code == 400:
                 response = json.loads(available_rooms.text)
                 raise Exceptions.RoomTimeInvalid(response['message'])
