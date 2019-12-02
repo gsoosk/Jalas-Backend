@@ -37,3 +37,12 @@ def cancel_meeting(meeting_id):
         meeting.save()
     else:
         raise Exceptions.MeetingNotFound
+
+
+def check_if_participants_are_valid(participants):
+    for participant_id in participants:
+        if not Participant.objects.filter(id=participant_id):
+            return False
+
+    return True
+

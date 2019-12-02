@@ -23,12 +23,15 @@ def create_meeting(request):
         try:
             create_new_meeting(meeting)
 
+        except Exceptions.InvalidParticipantInfo:
+            return Response(status=status.HTTP_412_PRECONDITION_FAILED,
+                            data={"message": "At least one participant is not valid."})
         except Exceptions.RoomCanNotBeReserved as e :
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message" : "Room Reserved Already"})
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Reserved Already"})
         except Exceptions.RoomTimeInvalid as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"message" : "Time Is Invalid"})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Time Is Invalid"})
         except Exceptions.RoomIsNotAvailable as e :
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message" : "Room Is Not Available"})
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message": "Room Is Not Available"})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

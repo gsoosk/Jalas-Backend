@@ -1,5 +1,5 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id
+from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, check_if_participants_are_valid
 import requests
 import json
 from meetings import Exceptions
@@ -72,9 +72,16 @@ def reserve_room(start, end, room):
     send_reserve_request(start, end, room.room_name)
 
 
+def check_participants_valid(participants):
+    if check_if_participants_are_valid(participants):
+        return
+    raise Exceptions.InvalidParticipantInfo()
+
+
 def create_new_meeting(new_meeting):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
         raise Exceptions.RoomTimeInvalid(Exceptions.TIME_ERROR)
+    check_participants_valid(new_meeting.participants)
     create_meeting(new_meeting)
     reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
