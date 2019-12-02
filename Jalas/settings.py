@@ -127,11 +127,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "MojoTeamSW"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.live.com'
+EMAIL_HOST_USER = "MojoTeamSW@outlook.com"
+DEFAULT_FROM_EMAIL = "MojoTeamSW@outlook.com"
+EMAIL_FROM = "MojoTeamSW@outlook.com"
 EMAIL_HOST_PASSWORD = "farzad_sadaf_yasaman_1234!"
+EMAIL_PORT = 587
 
 
 # Static files (CSS, JavaScript, Images)

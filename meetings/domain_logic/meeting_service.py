@@ -19,7 +19,7 @@ def send_reserve_request(start, end, room_name):
                                             "end": end[:-1],
                                             })
             if available_rooms.status_code == 404:
-                raise Exceptions.RoomCanNotReserved()
+                raise Exceptions.RoomCanNotBeReserved()
             if available_rooms.status_code == 400:
                 raise Exceptions.RoomTimeInvalid()
             elif available_rooms.status_code == 503:
@@ -28,7 +28,7 @@ def send_reserve_request(start, end, room_name):
                 raise Exceptions.RoomServiceInternalError()
             elif available_rooms.status_code == 200:
                 return
-        except Exceptions.RoomCanNotReserved as e:
+        except Exceptions.RoomCanNotBeReserved as e:
             raise e
         except Exceptions.RoomTimeInvalid as e:
             raise e
@@ -71,5 +71,8 @@ def reserve_room(start, end, room):
 def create_new_meeting(new_meeting):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
         raise Exceptions.RoomTimeInvalid(Exceptions.TIME_ERROR)
-    reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
+    # reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
+    send_email("Meeting Invitation", "There is going to be a meeting with following information:\nTime:"
+                                     + str(new_meeting.start_date_time) + " - " + str(new_meeting.end_date_time) +
+                                     "Room: " + str(new_meeting.room.room_name) + "\n", ["ys.jafari@ut.ac.ir"])
     create_meeting(new_meeting)
