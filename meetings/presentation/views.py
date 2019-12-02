@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
-import json
 
 
 @api_view(['POST'])
@@ -23,7 +22,7 @@ def create_meeting(request):
         try:
             create_new_meeting(meeting)
 
-        except Exceptions.RoomCanNotReserved as e :
+        except Exceptions.RoomCanNotBeReserved as e :
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data={"message" : "Room Reserved Already"})
         except Exceptions.RoomTimeInvalid as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"message" : "Time Is Invalid"})
@@ -36,12 +35,12 @@ def create_meeting(request):
 
 @api_view(['POST'])
 def get_available_rooms(request):
-    if 'start_date_time' not in request.data.keys() or 'end_date_time' not in request.data.keys() :
-        return Response({"message":"bad time"}, status=status.HTTP_400_BAD_REQUEST)
+    if 'start_date_time' not in request.data.keys() or 'end_date_time' not in request.data.keys():
+        return Response({"message": "bad time"}, status=status.HTTP_400_BAD_REQUEST)
     data = request.data
-    rooms = {}
     try:
         rooms = get_available_rooms_service(data['start_date_time']+'Z', data['end_date_time']+'Z')
     except Exceptions.RoomTimeInvalid as e:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Time Is Invalid"})
-    return Response({"rooms":list(rooms.keys())}, status.HTTP_200_OK)
+
+    return Response({"rooms": list(rooms.keys())}, status.HTTP_200_OK)
