@@ -6,6 +6,6 @@ def get_all_polls_by_creator_name(creator_id):
     return get_polls(creator_id)
 
 
-def get_poll_details(poll_id):
+def get_poll_details_by_poll_id(poll_id):
     return get_choices(poll_id)
 

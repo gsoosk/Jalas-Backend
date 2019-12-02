@@ -2,15 +2,15 @@
 # from django.http import HttpResponse
 
 from poll.models import MeetingPoll, PollChoiceItem
+from poll.data.MeetingPolls import MeetingPollRep
+from poll.data.PollChoiceItem import PollChoiceItemRep
 
 
 def get_polls(creator_id):
-    polls = []
 
-    polls_models = MeetingPoll.objects.filter(creator__id=creator_id)
-    for p in polls_models:
-        polls.append(MeetingPoll(p.title))
-    return polls
+    polls= MeetingPoll.objects.filter(creator__id=creator_id)
+    output = {'creator_id': creator_id, 'polls': [{'title' : p.title, 'id': p.id} for p in polls]}
+    return output
 
 
 def get_choices(poll_id):
@@ -34,8 +34,11 @@ def get_choices(poll_id):
             pos_voters = []
             neg_voters = []
             if c.agrees:
-                pos_voters.append(c.id)
+                pos_voters.append(c.voter.id)
             else:
-                neg_voters.append(c.id)
-            choices.append(PollChoiceItem(pos_voters, neg_voters, start, end))
-    return choices
+                neg_voters.append(c.voter.id)
+            choices.append(PollChoiceItemRep(pos_voters, neg_voters, start, end))
+
+    output = {'id': poll_id, 'choices': [c.toJson() for c in choices]}
+
+    return output

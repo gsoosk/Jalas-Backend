@@ -13,7 +13,6 @@ class ParticipantSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
 
 
-
 class PollChoiceItemSerializer(serializers.Serializer):
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()

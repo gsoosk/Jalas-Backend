@@ -5,6 +5,6 @@ from poll.presentation import views
 
 
 urlpatterns = [
-    url(r'(?P<poll_id>\d+)/$', views.get_poll_details, name='poll_details'),
+    path('<int:poll_id>', views.get_poll_details, name='poll_details'),
     url(r'$', views.get_polls, name='all_polls')
 ]
