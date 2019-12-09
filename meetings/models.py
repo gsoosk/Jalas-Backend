@@ -10,7 +10,7 @@ class Room(models.Model):
 
 class Participant(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField()
+    email = models.EmailField(default=None)
 
 
 class Meeting(models.Model):

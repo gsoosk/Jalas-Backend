@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from poll.models import MeetingPoll
+from meetings.models import Participant
 from poll.models import PollTime
 from meetings.presentation.serializers import ParticipantSerializer
 
@@ -14,6 +15,7 @@ class MeetingPollSerializer(serializers.Serializer):
 
 class ParticipantSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
+    email = serializers.EmailField()
 
 
 class PollChoiceItemSerializer(serializers.Serializer):
@@ -29,8 +31,20 @@ class PollTimeSerializer(serializers.ModelSerializer):
 
 
 class PollSerializer(serializers.ModelSerializer):
-    times = PollTimeSerializer(many=True)
-    creator = ParticipantSerializer(many=True)
+    choices = PollTimeSerializer(many=True)
+    creator = ParticipantSerializer()
+
     class Meta:
         model = MeetingPoll
-        fields = ['title', 'times', 'creator']
+        fields = ['title', 'choices', 'creator']
+
+    def create(self, validated_data):
+        choices_data = validated_data.pop('choices')
+        creator_data = validated_data.pop('creator')
+        creator = Participant.objects.create(**creator_data)
+        poll = MeetingPoll.objects.create(creator=creator, title=validated_data.pop('title'))
+
+        for choice_data in choices_data:
+            new_poll = PollTime.objects.create(**choice_data)
+            poll.choices.add(new_poll)
+        return poll
