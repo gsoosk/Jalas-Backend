@@ -7,7 +7,7 @@ router = routers.DefaultRouter()
 router.register(r'', views.PollsViewSets)
 
 urlpatterns = [
-    # path('<int:poll_id>', views.get_poll_details, name='poll_details'),
-    # url(r'$', views.get_polls, name='all_polls'),
+    path('<int:poll_id>', views.get_poll_details, name='poll_details'),
+    url(r'$', views.get_polls, name='all_polls'),
     path('', include(router.urls)),
 ]

@@ -32,16 +32,16 @@ class PollTimeSerializer(serializers.ModelSerializer):
 
 class PollSerializer(serializers.ModelSerializer):
     choices = PollTimeSerializer(many=True)
-    creator = ParticipantSerializer()
+    creator_id = serializers.IntegerField(source="creator.id")
 
     class Meta:
         model = MeetingPoll
-        fields = ['title', 'choices', 'creator']
+        fields = ['title', 'choices', 'creator_id']
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')
         creator_data = validated_data.pop('creator')
-        creator = Participant.objects.create(**creator_data)
+        creator = Participant.objects.get(pk=creator_data['id'])
         poll = MeetingPoll.objects.create(creator=creator, title=validated_data.pop('title'))
 
         for choice_data in choices_data:

@@ -27,9 +27,7 @@ def get_poll_details(request, poll_id=0):
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
 
-class PollsViewSets(mixins.RetrieveModelMixin,
-                    mixins.ListModelMixin,
-                    viewsets.GenericViewSet,
+class PollsViewSets(viewsets.GenericViewSet,
                     mixins.CreateModelMixin):
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer
