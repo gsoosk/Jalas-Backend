@@ -5,7 +5,8 @@ from rest_framework.decorators import api_view
 from reports.domain_logic.Reports import ReportsData
 from rest_framework import viewsets, mixins
 from poll.data import repo
-from poll.presentation.serializers import  PollSerializer
+from poll.presentation.serializers import PollSerializer
+
 
 @api_view(['GET'])
 def get_polls(request):
@@ -28,6 +29,7 @@ def get_poll_details(request, poll_id=0):
 
 
 class PollsViewSets(viewsets.GenericViewSet,
-                    mixins.CreateModelMixin):
+                    mixins.CreateModelMixin,
+                    mixins.ListModelMixin):
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer

@@ -9,7 +9,7 @@ class Room(models.Model):
 
 
 class Participant(models.Model):
-    name = models.CharField(max_length=100)
+    # name = models.CharField(max_length=100) #name field was unnecessary
     email = models.EmailField(default=None)
 
 
