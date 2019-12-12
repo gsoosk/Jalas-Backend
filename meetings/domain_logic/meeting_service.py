@@ -1,12 +1,12 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, check_if_participants_are_valid
+from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
+    check_if_participants_are_valid, get_participants_emails
 import requests
 import json
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 from reports.domain_logic.Reports import ReportsData
-
 
 
 def is_time_valid(start, end):
@@ -22,10 +22,10 @@ def send_reserve_request(start, end, room_name):
     while True:
         try:
             available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json={
-                                            "username": "rkhosravi",
-                                            "start": start[:-1],
-                                            "end": end[:-1],
-                                            }, timeout=2)
+                "username": "rkhosravi",
+                "start": start[:-1],
+                "end": end[:-1],
+            }, timeout=2)
             if available_rooms.status_code == 404:
                 raise Exceptions.RoomCanNotBeReserved()
             if available_rooms.status_code == 400:
@@ -88,11 +88,25 @@ def check_participants_valid(participants):
     raise Exceptions.InvalidParticipantInfo()
 
 
-def send_email_thread(start, end, room_name):
+def send_email_to_creator(start, end, room_name):
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
                + start + " - "
-               + end +"\nRoom: "
+               + end + "\nRoom: "
                + room_name + "\n", ["qsoosk@gmail.com"])
+
+
+def send_email_to_participants(start, end, room_name, participants, host, port, meeting_id):
+    emails = get_participants_emails(participants)
+    send_email("Meeting Invitation", "There is going to be a meeting with following information:\nTime:"
+               + start + " - "
+               + end + "\nRoom: "
+               + room_name + "\nYou can view this meeting in the following URL:\n"
+               + host + ":" + port + "/meetings/" + meeting_id, emails)
+
+
+def send_email_thread(start, end, room_name, participants, host, port, meeting_id):
+    send_email_to_creator(start, end, room_name)
+    send_email_to_participants(start, end, room_name, participants, host, port, meeting_id)
 
 
 def reserve_until_cancel(start, end, room_name, meeting_id):
@@ -109,19 +123,21 @@ def reserve_until_cancel(start, end, room_name, meeting_id):
     print("reserved")
     ReportsData.get_instance().reserving = False
 
-def create_new_meeting(new_meeting):
+
+def create_new_meeting(new_meeting, host, port):
     if not is_time_valid(new_meeting.start_date_time, new_meeting.end_date_time):
         raise Exceptions.RoomTimeInvalid(Exceptions.TIME_ERROR)
     check_participants_valid(new_meeting.participants)
     meeting_id = create_meeting(new_meeting)
     # Sending Mail
     thread.start_new_thread(send_email_thread, (str(new_meeting.start_date_time), str(new_meeting.end_date_time),
-                                         str(new_meeting.room.room_name)))
+                                                str(new_meeting.room.room_name), new_meeting.participants, host, port,
+                                                str(meeting_id)))
     # Reserving
-    try :
+    try:
         reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
         return meeting_id, True
     except requests.Timeout as e:
-        thread.start_new_thread(reserve_until_cancel, (new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room, meeting_id))
+        thread.start_new_thread(reserve_until_cancel,
+                                (new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room, meeting_id))
         return meeting_id, False
-

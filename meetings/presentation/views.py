@@ -21,7 +21,8 @@ def create_meeting(request):
         meeting = Meeting(serializer.data['title'], serializer.data['start_date_time'],
                           serializer.data['end_date_time'], room, participants)
         try:
-            meeting_id, reserved = create_new_meeting(meeting)
+            meeting_id, reserved = create_new_meeting(meeting, str(request.get_host()).split(':')[0]
+                                                      , str(request.get_port()))
             ReportsData.get_instance().finalize_meeting_time(request.session.session_key)
         except Exceptions.InvalidParticipantInfo:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED,

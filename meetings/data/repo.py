@@ -47,3 +47,11 @@ def check_if_participants_are_valid(participants):
 
     return True
 
+
+def get_participants_emails(participants):
+    emails = []
+    for participant_id in participants:
+        person = Participant.objects.filter(id=participant_id)[0]
+        emails.append(person.email)
+    return emails
+
