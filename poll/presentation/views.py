@@ -29,7 +29,6 @@ def get_poll_details(request, poll_id=0):
 
 
 class PollsViewSets(viewsets.GenericViewSet,
-                    mixins.CreateModelMixin,
-                    mixins.ListModelMixin):
+                    mixins.CreateModelMixin):
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer
