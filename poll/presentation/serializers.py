@@ -3,6 +3,7 @@ from poll.models import MeetingPoll
 from meetings.models import Participant
 from poll.models import PollTime
 from poll.data.repo import get_new_poll
+from poll.domain_logic.polls_service import send_poll_email_to_participants
 
 
 class MeetingPollSerializer(serializers.Serializer):
@@ -50,4 +51,6 @@ class PollSerializer(serializers.ModelSerializer):
         creator_data = validated_data.pop('creator')
         participants_data = validated_data.pop('participants')
 
-        return get_new_poll(choices_data, creator_data, participants_data, validated_data.pop('title'))
+        poll, emails = get_new_poll(choices_data, creator_data, participants_data, validated_data.pop('title'))
+        send_poll_email_to_participants(emails, poll.title, poll.id)
+        return poll
