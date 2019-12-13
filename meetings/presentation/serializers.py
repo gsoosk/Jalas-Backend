@@ -12,19 +12,19 @@ class MeetingSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Meeting
-        fields = ('title', 'start_date_time', 'end_date_time', 'room_id', 'participants_id', 'id')
+        fields = ['title', 'start_date_time', 'end_date_time', 'room_id', 'participants_id', 'id']
 
 
 class RoomSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Room
-        fields = ('room_name', 'capacity', 'location', 'has_video_projector')
+        fields = ['room_name', 'capacity', 'location', 'has_video_projector']
 
 
 class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Participant
-        fields = 'email'
+        fields = ['email']
 
 
 class MeetingInfoSerializer(serializers.ModelSerializer):

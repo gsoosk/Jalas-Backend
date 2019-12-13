@@ -4,13 +4,14 @@ from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
     get_meeting_details_by_poll_id
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from reports.domain_logic.Reports import ReportsData
+from meetings.data.repo import get_all_meetings
 
 
 @api_view(['POST'])
@@ -91,3 +92,9 @@ def get_meeting_details(request, meeting_id):
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
+
+# class MeetingsViewSets(viewsets.GenericViewSet,
+#                        mixins.RetrieveModelMixin,
+#                        mixins.ListModelMixin):
+#     queryset = get_all_meetings()
+#     serializer_class = MeetingInfoSerializer

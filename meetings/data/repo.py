@@ -61,3 +61,7 @@ def get_meeting_info(meeting_id):
     return meeting[0]
 
 
+def get_all_meetings():
+    return Meeting.objects.all()
+
+
