@@ -1,5 +1,4 @@
 from django.db import models
-from meetings.models import Participant
 from django.utils.timezone import now
 
 
@@ -11,7 +10,8 @@ class PollTime(models.Model):
 class MeetingPoll(models.Model):
     title = models.CharField(max_length=100)
     choices = models.ManyToManyField('PollTime', default=None)
-    creator = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None)
+    creator = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None, related_name='creator')
+    participants = models.ManyToManyField('meetings.Participant', default=None, related_name='participants')
 
 
 class PollChoiceItem(models.Model):
