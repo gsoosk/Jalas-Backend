@@ -1,6 +1,6 @@
 # from poll.domain_logic.polls_service import get_all_polls_by_creator_name
 # from django.http import HttpResponse
-
+from meetings.models import Participant
 from poll.models import MeetingPoll, PollChoiceItem, PollTime
 from poll.data.MeetingPolls import MeetingPollRep
 from poll.data.PollChoiceItem import PollChoiceItemRep
@@ -39,3 +39,18 @@ def get_choices(poll_id):
     output = {'id': poll_id, 'choices': [c.toJson() for c in choices]}
 
     return output
+
+
+def get_new_poll(choices_data, creator_data, participants_data, title):
+    creator = Participant.objects.get(pk=creator_data['id'])
+    poll = MeetingPoll.objects.create(creator=creator, title=title)
+
+    for choice_data in choices_data:
+        new_poll = PollTime.objects.create(**choice_data)
+        poll.choices.add(new_poll)
+
+    for participant_data in participants_data:
+        new_participant = Participant.objects.create(**participant_data)
+        poll.participants.add(new_participant)
+
+    return poll

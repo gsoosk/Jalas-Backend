@@ -21,7 +21,7 @@ def cancel_room_reservation(meeting_id):
 def send_reserve_request(start, end, room_name):
     while True:
         try:
-            available_rooms = requests.post('http://213.233.176.40/rooms/' + str(room_name) + '/reserve', json={
+            available_rooms = requests.post('http://5.253.27.176/rooms/' + str(room_name) + '/reserve', json={
                 "username": "rkhosravi",
                 "start": start[:-1],
                 "end": end[:-1],
@@ -51,7 +51,7 @@ def send_reserve_request(start, end, room_name):
 def get_available_rooms_service(start, end):
     while True:
         try:
-            available_rooms = requests.get(url='http://213.233.176.40/available_rooms' +
+            available_rooms = requests.get(url='http://5.253.27.176/available_rooms' +
                                                '?start=' + start[:-1] + '&end=' + end[:-1], timeout=3)
             if available_rooms.status_code == 400:
                 response = json.loads(available_rooms.text)
@@ -101,7 +101,7 @@ def send_email_to_participants(start, end, room_name, participants, host, port, 
                + start + " - "
                + end + "\nRoom: "
                + room_name + "\nYou can view this meeting in the following URL:\n"
-               + host + ":" + port + "/meetings/" + meeting_id, emails)
+               + "http://" + host + ":" + port + "/meetings/" + meeting_id, emails)
 
 
 def send_email_thread(start, end, room_name, participants, host, port, meeting_id):

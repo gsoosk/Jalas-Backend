@@ -1,4 +1,3 @@
-
 from poll.data.repo import get_polls, get_choices
 
 
