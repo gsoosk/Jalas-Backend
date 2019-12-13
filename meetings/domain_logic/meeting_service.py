@@ -23,8 +23,8 @@ def send_reserve_request(start, end, room_name):
         try:
             available_rooms = requests.post('http://5.253.27.176/rooms/' + str(room_name) + '/reserve', json={
                 "username": "rkhosravi",
-                "start": start[:-1],
-                "end": end[:-1],
+                "start": start[:19],
+                "end": end[:19],
             }, timeout=2)
             if available_rooms.status_code == 404:
                 raise Exceptions.RoomCanNotBeReserved()
@@ -52,7 +52,7 @@ def get_available_rooms_service(start, end):
     while True:
         try:
             available_rooms = requests.get(url='http://5.253.27.176/available_rooms' +
-                                               '?start=' + start[:-1] + '&end=' + end[:-1], timeout=3)
+                                               '?start=' + start[:19] + '&end=' + end[:19], timeout=3)
             if available_rooms.status_code == 400:
                 response = json.loads(available_rooms.text)
                 raise Exceptions.RoomTimeInvalid(response['message'])
