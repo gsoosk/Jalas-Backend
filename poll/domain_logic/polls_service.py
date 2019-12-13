@@ -18,6 +18,7 @@ def get_poll_details_by_poll_id(poll_id):
 
 
 def send_poll_email_to_participants(emails, title, poll_id):
-    thread.start_new_thread(send_email, ("Poll Contribution Invitation", "There is a poll named "+title+" you added to it in Jalas"
-               + "\nYou can view this Poll in the following URL :\n"
-               + "http://" + "localhost" + ":" + "3000" + "/polls/" + str(poll_id), emails))
+    thread.start_new_thread(send_email, (
+        "Poll Contribution Invitation", "There is a poll named " + title + " you added to it in Jalas"
+        + "\nYou can view this Poll in the following URL :\n"
+        + "http://" + "localhost" + ":" + "3000" + "/polls/" + str(poll_id), emails))

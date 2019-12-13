@@ -6,8 +6,10 @@ class MeetingSerializer(serializers.HyperlinkedModelSerializer):
     participants_id = serializers.ListField(child=serializers.IntegerField())
     room_id = serializers.IntegerField()
     id = serializers.IntegerField(default=-1)
+
     def set_id(self, id):
         self.id = id
+
     class Meta:
         model = Meeting
         fields = ('title', 'start_date_time', 'end_date_time', 'room_id', 'participants_id', 'id')
@@ -22,4 +24,13 @@ class RoomSerializer(serializers.HyperlinkedModelSerializer):
 class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Participant
-        fields = ('name', 'email')
+        fields = 'email'
+
+
+class MeetingInfoSerializer(serializers.ModelSerializer):
+    participants = ParticipantSerializer(many=True)
+    room = RoomSerializer(many=False)
+
+    class Meta:
+        model = Meeting
+        fields = ['title', 'start_date_time', 'end_date_time', 'room', 'participants', 'is_cancelled']

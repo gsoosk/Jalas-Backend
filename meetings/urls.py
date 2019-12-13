@@ -7,7 +7,8 @@ urlpatterns = [
     path('', views.create_meeting),
     path('available', views.get_available_rooms),
     path('cancel', views.cancel_reservation),
-    path('report', views.get_report)
+    path('report', views.get_report),
+    path('<int:meeting_id>', views.get_meeting_details, name='meeting_details'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,10 +1,13 @@
+from django.http import JsonResponse
+
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
-from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation
-from rest_framework import status
+from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
+    get_meeting_details_by_poll_id
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from meetings.presentation.serializers import MeetingSerializer
+from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from reports.domain_logic.Reports import ReportsData
@@ -75,4 +78,16 @@ def get_report(request):
     if report.num_created_meetings > 0:
         average = report.sum_meeting_creation_time / report.num_created_meetings
 
-    return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms), "Number of cancelled/modified meetings": str(report.num_canceled_or_modified_meetings)})
+    return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms),
+                     "Number of cancelled/modified meetings": str(report.num_canceled_or_modified_meetings)})
+
+
+@api_view(['GET'])
+def get_meeting_details(request, meeting_id):
+    try:
+        meeting = get_meeting_details_by_poll_id(meeting_id)
+        serializer = MeetingInfoSerializer(meeting)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)
+

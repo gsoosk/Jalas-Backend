@@ -55,3 +55,9 @@ def get_participants_emails(participants):
         emails.append(person.email)
     return emails
 
+
+def get_meeting_info(meeting_id):
+    meeting = Meeting.objects.filter(id=meeting_id)
+    return meeting[0]
+
+

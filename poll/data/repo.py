@@ -12,9 +12,11 @@ def get_polls(creator_id):
     output = {'creator_id': creator_id, 'polls': [{'title': p.title, 'id': p.id} for p in polls]}
     return output
 
+
 def get_all_polls():
     polls = MeetingPoll.objects.all()
     return polls
+
 
 def get_choices(poll_id):
     choices = []
