@@ -16,7 +16,9 @@ before_script:
 build:
     stage: build
     script:
-        - python manage.py runserver
+        - python manage.py makemigrations poll
+        - python manage.py makemigrations meetings
+        - python manage.py migrate
 
 test:
     stage: test
