@@ -65,12 +65,12 @@ def get_new_poll(choices_data, creator_data, participants_data, title):
     return poll, emails
 
 
-def check_if_person_is_participant_of_poll(poll_id, participant_id):
+def check_if_person_is_participant_of_poll(poll_id, participant_email):
     if MeetingPoll.objects.get(id=poll_id):
         poll = MeetingPoll.objects.get(id=poll_id)
         participants = poll.participants.all()
 
-        if participants.filter(pk=participant_id):
+        if participants.filter(email=participant_email):
             return True
         return False
     else:
@@ -86,24 +86,22 @@ def check_if_person_has_voted_before(poll_id, participant_id):
 
 
 def add_new_votes_to_poll(voter, poll_id, votes):
-    if Participant.objects.filter(email=voter):
-        voter_participant = Participant.objects.filter(email=voter)[0]
-        if not check_if_person_is_participant_of_poll(poll_id, voter_participant.id):
-            print("not a participant of this poll")
-            raise Exceptions.NotParticipant
+    if MeetingPoll.objects.get(id=poll_id):
+        poll = MeetingPoll.objects.get(id=poll_id)
+    else:
+        raise Exceptions.InvalidPoll
+    if poll.participants.filter(email=voter):
+        voter_participant = poll.participants.filter(email=voter)[0]
         if check_if_person_has_voted_before(poll_id, voter_participant.id):
             raise Exceptions.VotedBefore
 
-        poll = MeetingPoll.objects.get(id=poll_id)
         for chosen_time, agree in votes.items():
-            if PollChoiceItem.objects.get(id=chosen_time):
+            if PollTime.objects.get(id=chosen_time):
                 chosen_poll_time = PollTime.objects.get(id=chosen_time)
                 choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree)
                 choice_item.save()
             else:
                 raise Exceptions.InvalidChosenTime
-
-
     else:
         print("participant not found")
-        raise Exceptions.InvalidEmail
+        raise Exceptions.NotParticipant
