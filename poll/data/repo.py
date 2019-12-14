@@ -13,9 +13,11 @@ def get_polls(creator_id):
     output = {'creator_id': creator_id, 'polls': [{'title': p.title, 'id': p.id} for p in polls]}
     return output
 
+
 def get_all_polls():
     polls = MeetingPoll.objects.all()
     return polls
+
 
 def get_choices(poll_id):
     choices = []
@@ -23,6 +25,7 @@ def get_choices(poll_id):
     poll = MeetingPoll.objects.get(id=poll_id)
     poll_title = poll.title
     poll_times = poll.choices.all()
+    participants = poll.participants.all()
 
     for t in poll_times:
         votes = PollChoiceItem.objects.filter(poll=poll_id, chosen_time=t.id)
@@ -38,8 +41,10 @@ def get_choices(poll_id):
             else:
                 neg_voters.append(v.voter.id)
 
-        choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, start, end))
-    output = {'id': poll_id, 'title': poll_title, 'choices': [c.toJson() for c in choices]}
+        choices.append(PollChoiceItemRep(pos_voters, neg_voters, start, end))
+
+    participant_ids = [participant.id for participant in participants]
+    output = {'id': poll_id, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
 
     return output
 

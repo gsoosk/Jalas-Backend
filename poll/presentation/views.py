@@ -2,7 +2,7 @@ from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_p
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from reports.domain_logic.Reports import ReportsData
+from report.domain_logic.Reports import ReportsData
 from rest_framework import viewsets, mixins
 from poll.data import repo
 from poll.presentation.serializers import PollSerializer

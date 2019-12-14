@@ -1,12 +1,13 @@
 from meetings.data.Room import Room
-from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
-    check_if_participants_are_valid, get_participants_emails
 import requests
 import json
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
-from reports.domain_logic.Reports import ReportsData
+from report.domain_logic.Reports import ReportsData
+from report.data import repo
+from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
+    check_if_participants_are_valid, get_participants_emails, get_meeting_info
 
 
 def is_time_valid(start, end):
@@ -37,6 +38,7 @@ def send_reserve_request(start, end, room_name):
             elif available_rooms.status_code == 200:
                 report = ReportsData.get_instance()
                 report.num_reserved_rooms += 1
+                repo.increment_reserved()
                 return
         except Exceptions.RoomCanNotBeReserved as e:
             raise e
@@ -141,3 +143,7 @@ def create_new_meeting(new_meeting, host, port):
         thread.start_new_thread(reserve_until_cancel,
                                 (new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room, meeting_id))
         return meeting_id, False
+
+
+def get_meeting_details_by_poll_id(meeting_id):
+    return get_meeting_info(meeting_id)

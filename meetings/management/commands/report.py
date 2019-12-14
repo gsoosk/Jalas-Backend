@@ -1,5 +1,5 @@
-from django.core.management.base import BaseCommand, CommandError
-from reports.domain_logic.Reports import ReportsData
+from django.core.management.base import BaseCommand
+from report.domain_logic.Reports import ReportsData
 
 
 class Command(BaseCommand):
@@ -11,4 +11,4 @@ class Command(BaseCommand):
         print(report.num_created_meetings)
         print("Average Creation Time: " + str(average))
         print("Number of reserved rooms: " + str(report.num_reserved_rooms))
-        print("Number of cancelled/modified meetings: " + str(report.num_canceled_or_modified_meetings))
+        print("Number of cancelled/modified meetings: " + str(report.num_cancelled_or_modified_meetings))
