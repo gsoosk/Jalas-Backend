@@ -14,7 +14,7 @@ def get_poll_details_by_poll_id(poll_id):
     try:
         return get_choices(poll_id)
     except Exception as e:
-        raise Exception()
+        raise e
 
 
 def send_poll_email_to_participants(emails, title, poll_id):

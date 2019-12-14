@@ -41,10 +41,9 @@ def get_choices(poll_id):
             else:
                 neg_voters.append(v.voter.id)
 
-        choices.append(PollChoiceItemRep(pos_voters, neg_voters, start, end))
-
+        choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, start, end))
     participant_ids = [participant.id for participant in participants]
-    output = {'id': poll_id, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
+    output = {'id': poll_id, 'title': poll_title, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
 
     return output
 
