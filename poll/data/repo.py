@@ -5,6 +5,7 @@ from meetings.domain_logic import email_service
 from poll.models import MeetingPoll, PollChoiceItem, PollTime
 from poll.data.MeetingPolls import MeetingPollRep
 from poll.data.PollChoiceItem import PollChoiceItemRep
+import poll.Exceptions as Exceptions
 
 
 def get_polls(creator_id):
@@ -20,6 +21,7 @@ def get_choices(poll_id):
     choices = []
 
     poll = MeetingPoll.objects.get(id=poll_id)
+    poll_title = poll.title
     poll_times = poll.choices.all()
 
     for t in poll_times:
@@ -36,8 +38,8 @@ def get_choices(poll_id):
             else:
                 neg_voters.append(v.voter.id)
 
-        choices.append(PollChoiceItemRep(pos_voters, neg_voters, start, end))
-    output = {'id': poll_id, 'choices': [c.toJson() for c in choices]}
+        choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, start, end))
+    output = {'id': poll_id, 'title': poll_title, 'choices': [c.toJson() for c in choices]}
 
     return output
 
@@ -57,3 +59,47 @@ def get_new_poll(choices_data, creator_data, participants_data, title):
         poll.participants.add(new_participant)
 
     return poll, emails
+
+
+def check_if_person_is_participant_of_poll(poll_id, participant_id):
+    if MeetingPoll.objects.get(id=poll_id):
+        poll = MeetingPoll.objects.get(id=poll_id)
+        participants = poll.participants.all()
+
+        if participants.filter(pk=participant_id):
+            return True
+        return False
+    else:
+        raise Exceptions.InvalidPoll
+
+
+def check_if_person_has_voted_before(poll_id, participant_id):
+    if PollChoiceItem.objects.filter(voter=participant_id, poll=poll_id):
+        print("^^^^^^^^^^^^^^^^voted before")
+        return True
+    print("^^^^^^^^^^^^^^^^has not voted before")
+    return False
+
+
+def add_new_votes_to_poll(voter, poll_id, votes):
+    if Participant.objects.filter(email=voter):
+        voter_participant = Participant.objects.filter(email=voter)[0]
+        if not check_if_person_is_participant_of_poll(poll_id, voter_participant.id):
+            print("not a participant of this poll")
+            raise Exceptions.NotParticipant
+        if check_if_person_has_voted_before(poll_id, voter_participant.id):
+            raise Exceptions.VotedBefore
+
+        poll = MeetingPoll.objects.get(id=poll_id)
+        for chosen_time, agree in votes.items():
+            if PollChoiceItem.objects.get(id=chosen_time):
+                chosen_poll_time = PollTime.objects.get(id=chosen_time)
+                choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree)
+                choice_item.save()
+            else:
+                raise Exceptions.InvalidChosenTime
+
+
+    else:
+        print("participant not found")
+        raise Exceptions.InvalidEmail

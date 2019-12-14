@@ -20,6 +20,10 @@ class ParticipantSerializer(serializers.Serializer):
 
 
 class PollChoiceItemSerializer(serializers.Serializer):
+    # voter
+    # poll
+    # chosen_time
+    # agrees
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     voters = ParticipantSerializer(many=True)
