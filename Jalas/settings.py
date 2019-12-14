@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'meetings.apps.MeetingsConfig',
+    'report.apps.ReportConfig',
     'poll.apps.PollConfig',
     'rest_framework',
     'corsheaders',

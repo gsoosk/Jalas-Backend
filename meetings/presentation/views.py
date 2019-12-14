@@ -1,17 +1,14 @@
-from django.http import JsonResponse
-
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
     get_meeting_details_by_poll_id
-from rest_framework import status, viewsets, mixins
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
-from reports.domain_logic.Reports import ReportsData
-from meetings.data.repo import get_all_meetings
+from report.domain_logic.Reports import ReportsData
 
 
 @api_view(['POST'])
@@ -66,7 +63,7 @@ def cancel_reservation(request):
         if not ReportsData.get_instance().reserving:
             return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
         cancel_room_reservation(data['meeting_id'])
-        ReportsData.get_instance().inc_canceled(request.session.session_key)
+        ReportsData.get_instance().inc_cancelled(request.session.session_key)
         return Response(status=status.HTTP_200_OK)
     except Exceptions.MeetingNotFound:
         return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -80,7 +77,7 @@ def get_report(request):
         average = report.sum_meeting_creation_time / report.num_created_meetings
 
     return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms),
-                     "Number of cancelled/modified meetings": str(report.num_canceled_or_modified_meetings)})
+                     "Number of cancelled/modified meetings": str(report.num_cancelled_or_modified_meetings)})
 
 
 @api_view(['GET'])
