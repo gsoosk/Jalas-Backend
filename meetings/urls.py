@@ -11,6 +11,7 @@ urlpatterns = [
     path('available', views.get_available_rooms),
     path('cancel', views.cancel_reservation),
     path('report', views.get_report),
+    path('login', views.login),
 
     path('<int:meeting_id>', views.get_meeting_details, name='meeting_details'),
     # path('<int:pk>', views.MeetingInfoSerializer.as_view({'get': 'retrieve'}), name='meeting_details'),

@@ -1,3 +1,5 @@
+from django.contrib.auth import authenticate
+
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
@@ -5,10 +7,11 @@ from meetings.domain_logic.meeting_service import create_new_meeting, cancel_roo
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer
+from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
+from rest_framework.views import APIView
 
 
 @api_view(['POST'])
@@ -89,6 +92,17 @@ def get_meeting_details(request, meeting_id):
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['POST'])
+def login(request):
+    data = request.data
+    serializer = LoginSerializer(data=data)
+    serializer.is_valid(raise_exception=True)
+    user = authenticate(username=serializer.validated_data['email'], password=serializer.validated_data['password'])
+    if user is not None:
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "authentication failed"}, status=status.HTTP_403_FORBIDDEN)
 
 # class MeetingsViewSets(viewsets.GenericViewSet,
 #                        mixins.RetrieveModelMixin,
