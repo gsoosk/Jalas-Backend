@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
 class Room(models.Model):
@@ -8,9 +9,10 @@ class Room(models.Model):
     has_video_projector = models.BooleanField(default=False)
 
 
-class Participant(models.Model):
+class Participant(AbstractUser):
     # name = models.CharField(max_length=100) #name field was unnecessary
-    email = models.EmailField(default=None)
+    REQUIRED_FIELDS = ['email']
+    EMAIL_FIELD = 'email'
 
 
 class Meeting(models.Model):

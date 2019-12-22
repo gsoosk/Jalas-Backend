@@ -138,6 +138,7 @@ EMAIL_FROM = "MojoTeamSW@outlook.com"
 EMAIL_HOST_PASSWORD = "farzad_sadaf_yasaman_1234!"
 EMAIL_PORT = 587
 
+AUTH_USER_MODEL = "meetings.Participant"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
