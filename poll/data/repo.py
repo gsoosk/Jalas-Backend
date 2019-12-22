@@ -48,7 +48,7 @@ def get_choices(poll_id):
     return output
 
 
-def get_new_poll(choices_data, creator_data, participants_data, title):
+def get_new_poll(choices_data, creator_data, participants, title):
     creator = Participant.objects.get(pk=creator_data['id'])
     poll = MeetingPoll.objects.create(creator=creator, title=title)
 
@@ -57,8 +57,7 @@ def get_new_poll(choices_data, creator_data, participants_data, title):
         poll.choices.add(new_poll)
 
     emails = []
-    for participant_data in participants_data:
-        new_participant = Participant.objects.create(**participant_data)
+    for new_participant in participants:
         emails.append(new_participant.email)
         poll.participants.add(new_participant)
 

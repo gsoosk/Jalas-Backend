@@ -11,7 +11,7 @@ from rest_framework import serializers
 
 class CreatePollTests(TestCase):
     def setUp(self):
-        self.creator = Participant.objects.create(email="p1@p.com")
+        self.creator = Participant.objects.create(email="p1@p.com", password="s")
         self.poll = MeetingPoll.objects.create(title='fake', creator=self.creator)
         self.participant = Participant.objects.create(email="p2@p.com")
         self.poll.participants.add(self.participant)
@@ -19,6 +19,7 @@ class CreatePollTests(TestCase):
         self.end = timezone.now()
         self.choice = PollTime.objects.create(start_date_time=self.start, end_date_time=self.end)
         self.poll.choices.add(self.choice)
+
 
     def testParticipantSerialization(self):
         serializer = ParticipantModelSerializer(self.participant)
@@ -34,7 +35,7 @@ class CreatePollTests(TestCase):
         serializer = PollSerializer(self.poll)
         start = serializers.DateTimeField().to_representation(self.start)
         end = serializers.DateTimeField().to_representation(self.end)
-        self.assertEqual(serializer.data, {'title': 'fake', 'choices': [OrderedDict([('start_date_time', start), ('end_date_time', end)])], 'creator_id': 1, 'participants': [OrderedDict([('email', 'p2@p.com')])]})
+        self.assertEqual(serializer.data, {'title': 'fake', 'choices': [OrderedDict([('start_date_time', start), ('end_date_time', end)])], 'creator_id': 1, 'participants': ['p2@p.com']})
 
     def tearDown(self):
         self.poll.delete()

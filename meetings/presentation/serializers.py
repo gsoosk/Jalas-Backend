@@ -34,3 +34,12 @@ class MeetingInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting
         fields = ['title', 'start_date_time', 'end_date_time', 'room', 'participants', 'is_cancelled']
+
+
+class LoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    class Meta:
+        model = Participant
+        fields = ['email', 'password']

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'poll.apps.PollConfig',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -72,14 +73,6 @@ TEMPLATES = [
         },
     },
 ]
-
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ]
-}
 
 WSGI_APPLICATION = 'Jalas.wsgi.application'
 
@@ -138,6 +131,14 @@ EMAIL_FROM = "MojoTeamSW@outlook.com"
 EMAIL_HOST_PASSWORD = "farzad_sadaf_yasaman_1234!"
 EMAIL_PORT = 587
 
+AUTH_USER_MODEL = "meetings.Participant"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/

@@ -1,17 +1,27 @@
+from django.contrib.auth import authenticate
+
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
     get_meeting_details_by_poll_id
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer
+from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
+from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def create_meeting(request):
     serializer = MeetingSerializer(data=request.data)
     if serializer.is_valid():
@@ -40,6 +50,8 @@ def create_meeting(request):
 
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_available_rooms(request):
     if 'start_date_time' not in request.data.keys() or 'end_date_time' not in request.data.keys():
         return Response({"message": "bad time"}, status=status.HTTP_400_BAD_REQUEST)
@@ -55,6 +67,8 @@ def get_available_rooms(request):
 
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def cancel_reservation(request):
     if 'meeting_id' not in request.data.keys():
         return Response({"message": "No id in request"}, status=status.HTTP_400_BAD_REQUEST)
@@ -70,6 +84,8 @@ def cancel_reservation(request):
 
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_report(request):
     report = ReportsData.get_instance()
     average = 0
@@ -81,6 +97,8 @@ def get_report(request):
 
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_meeting_details(request, meeting_id):
     try:
         meeting = get_meeting_details_by_poll_id(meeting_id)
@@ -90,8 +108,17 @@ def get_meeting_details(request, meeting_id):
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
 
-# class MeetingsViewSets(viewsets.GenericViewSet,
-#                        mixins.RetrieveModelMixin,
-#                        mixins.ListModelMixin):
-#     queryset = get_all_meetings()
-#     serializer_class = MeetingInfoSerializer
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
