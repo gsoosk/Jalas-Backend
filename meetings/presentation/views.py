@@ -12,6 +12,9 @@ from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
 from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 
 @api_view(['POST'])
@@ -93,19 +96,17 @@ def get_meeting_details(request, meeting_id):
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['POST'])
-def login(request):
-    data = request.data
-    serializer = LoginSerializer(data=data)
-    serializer.is_valid(raise_exception=True)
-    user = authenticate(username=serializer.validated_data['email'], password=serializer.validated_data['password'])
-    if user is not None:
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "authentication failed"}, status=status.HTTP_403_FORBIDDEN)
+class CustomAuthToken(ObtainAuthToken):
 
-# class MeetingsViewSets(viewsets.GenericViewSet,
-#                        mixins.RetrieveModelMixin,
-#                        mixins.ListModelMixin):
-#     queryset = get_all_meetings()
-#     serializer_class = MeetingInfoSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
+
