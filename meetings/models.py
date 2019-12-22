@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils.translation import ugettext_lazy as _
 
 
 class Room(models.Model):
@@ -11,7 +12,14 @@ class Room(models.Model):
 
 class Participant(AbstractUser):
     # name = models.CharField(max_length=100) #name field was unnecessary
-    REQUIRED_FIELDS = ['email']
+    # Removing Django User Unnecessary Fields :
+    username = None
+    first_name = None
+    last_name = None
+    # Change user name to email
+    email = models.EmailField(_('email address'), unique=True)
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
 
 

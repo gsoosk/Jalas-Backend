@@ -23,3 +23,7 @@ class InvalidChosenTime(Exception):
 
 class VotedBefore(Exception):
     pass
+
+
+class ParticipantsAreNotExsits(Exception):
+    pass
