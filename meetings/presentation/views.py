@@ -86,19 +86,6 @@ def cancel_reservation(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_report(request):
-    report = ReportsData.get_instance()
-    average = 0
-    if report.num_created_meetings > 0:
-        average = report.sum_meeting_creation_time / report.num_created_meetings
-
-    return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms),
-                     "Number of cancelled/modified meetings": str(report.num_cancelled_or_modified_meetings)})
-
-
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_meeting_details(request, meeting_id):
     try:
         meeting = get_meeting_details_by_poll_id(meeting_id)
