@@ -53,7 +53,6 @@ def vote_for_poll(request):
 
     try:
         add_new_votes(voter, poll_id, votes)
-
     except Exceptions.NotParticipant as e:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.PARTICIPANT_ERROR})
     except Exceptions.InvalidEmail as e:

@@ -6,7 +6,8 @@ from poll.models import MeetingPoll, PollChoiceItem, PollTime
 from poll.data.MeetingPolls import MeetingPollRep
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
-
+from meetings.domain_logic.email_service import send_email
+import _thread as thread
 
 def get_polls(creator_id):
     polls = MeetingPoll.objects.filter(creator__id=creator_id)
@@ -84,6 +85,12 @@ def check_if_person_has_voted_before(poll_id, participant_id):
     return False
 
 
+def send_email_to_poll_creator(voter, poll):
+    thread.start_new_thread(send_email, (f'New vote for {poll.title}',
+                                         f'There is a vote for {poll.title} from {voter}',
+                                         [poll.creator.email]))
+
+
 def add_new_votes_to_poll(voter, poll_id, votes):
     if MeetingPoll.objects.get(id=poll_id):
         poll = MeetingPoll.objects.get(id=poll_id)
@@ -101,6 +108,7 @@ def add_new_votes_to_poll(voter, poll_id, votes):
                 choice_item.save()
             else:
                 raise Exceptions.InvalidChosenTime
+        send_email_to_poll_creator(voter, poll)
     else:
         print("participant not found")
         raise Exceptions.NotParticipant
