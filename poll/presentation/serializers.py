@@ -46,11 +46,11 @@ class PollSerializer(serializers.ModelSerializer):
     choices = PollTimeSerializer(many=True)
     participants = serializers.SlugRelatedField(many=True, slug_field='email', queryset=Participant.objects.all())
     creator_id = serializers.IntegerField(source="creator.id")
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = MeetingPoll
-        fields = ['title', 'choices', 'creator_id', 'participants']
-
+        fields = ['id','title', 'choices', 'creator_id', 'participants']
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')
@@ -62,3 +62,25 @@ class PollSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Some of Participants Are Not Exists')
         send_poll_email_to_participants(emails, poll.title, poll.id)
         return poll
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'title':
+                setattr(instance, attr, value)
+            elif attr == 'choices':
+                for choice in instance.choices.iterator():
+                    instance.choices.remove(choice)
+                    choice.delete()
+
+                for choice_data in value:
+                    new_poll = PollTime.objects.create(**choice_data)
+                    instance.choices.add(new_poll)
+            elif attr == 'participants':
+                for participant in instance.participants.iterator():
+                    instance.participants.remove(participant)
+                for new_participant in value:
+                    instance.participants.add(new_participant)
+
+        instance.save()
+        return instance
+

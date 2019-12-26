@@ -8,7 +8,8 @@ from poll.data import repo
 from poll.presentation.serializers import PollSerializer
 import poll.Exceptions as Exceptions
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework import generics
 
 
 @api_view(['GET'])
@@ -35,10 +36,26 @@ def get_poll_details(request, poll_id=0):
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
 
+class CanChangePoll(BasePermission):
+    def has_permission(self, request, view):
+        if view.action == 'update' or view.action == 'retrieve':
+            instance = view.queryset.get(pk=view.kwargs['pk'])
+            if not instance.creator.id == request.user.id:
+                return False
+        return True
+
+
 class PollsViewSets(viewsets.GenericViewSet,
-                    mixins.CreateModelMixin):
+                    mixins.UpdateModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [CanChangePoll, IsAuthenticated]
+
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer
+
 
 
 @api_view(['POST'])
