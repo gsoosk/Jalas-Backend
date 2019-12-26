@@ -45,7 +45,7 @@ class ParticipantModelSerializer(serializers.ModelSerializer):
 class PollSerializer(serializers.ModelSerializer):
     choices = PollTimeSerializer(many=True)
     participants = serializers.SlugRelatedField(many=True, slug_field='email', queryset=Participant.objects.all())
-    creator_id = serializers.IntegerField(source="creator.id")
+    creator_id = serializers.IntegerField(source="creator.id", read_only=True)
     id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -54,10 +54,10 @@ class PollSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')
-        creator_data = validated_data.pop('creator')
+        creator = self.context['request'].user
         participants = validated_data.pop('participants')
         try:
-            poll, emails = get_new_poll(choices_data, creator_data, participants, validated_data.pop('title'))
+            poll, emails = get_new_poll(choices_data, creator, participants, validated_data.pop('title'))
         except Exceptions.ParticipantsAreNotExsits:
             raise serializers.ValidationError('Some of Participants Are Not Exists')
         send_poll_email_to_participants(emails, poll.title, poll.id)
