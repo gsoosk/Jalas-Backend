@@ -8,6 +8,7 @@ from rest_framework.authtoken import views as auth_views
 
 urlpatterns = [
     path('', views.create_meeting),
+    path('all', views.get_meetings_list),
     path('available', views.get_available_rooms),
     path('cancel', views.cancel_reservation),
     # path('login', views.login),
