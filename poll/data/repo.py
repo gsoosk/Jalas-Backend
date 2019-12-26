@@ -9,6 +9,7 @@ import poll.Exceptions as Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 
+
 def get_polls(creator_id):
     polls = MeetingPoll.objects.filter(creator__id=creator_id)
     output = {'creator_id': creator_id, 'polls': [{'title': p.title, 'id': p.id} for p in polls]}

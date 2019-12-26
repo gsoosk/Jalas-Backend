@@ -63,5 +63,6 @@ class Meeting(models.Model):
     start_date_time = models.DateTimeField('Start time')
     end_date_time = models.DateTimeField('End time')
     room = models.ForeignKey('Room', null=True, on_delete=models.SET_NULL)
-    participants = models.ManyToManyField('Participant')
+    participants = models.ManyToManyField('Participant', default=None, related_name='meeting_participants')
+    creator = models.ForeignKey('Participant', on_delete=models.CASCADE, default=None, related_name='meeting_creator')
     is_cancelled = models.BooleanField(default=False)

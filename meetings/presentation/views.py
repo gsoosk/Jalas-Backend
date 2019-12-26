@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
-    get_meeting_details_by_poll_id
+    get_meeting_details_by_poll_id, get_all_meetings_by_user_id
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -23,6 +23,7 @@ from rest_framework.permissions import IsAuthenticated
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_meeting(request):
+    user_id = request.user.id
     serializer = MeetingSerializer(data=request.data)
     if serializer.is_valid():
         room = Room(serializer.data['room_id'])
@@ -30,7 +31,7 @@ def create_meeting(request):
         for participant in serializer.data['participants_id']:
             participants.append(participant)
         meeting = Meeting(serializer.data['title'], serializer.data['start_date_time'],
-                          serializer.data['end_date_time'], room, participants)
+                          serializer.data['end_date_time'], room, participants, user_id)
         try:
             meeting_id, reserved = create_new_meeting(meeting, str(request.get_host()).split(':')[0]
                                                       , str(3000))
@@ -91,6 +92,18 @@ def get_meeting_details(request, meeting_id):
         meeting = get_meeting_details_by_poll_id(meeting_id)
         serializer = MeetingInfoSerializer(meeting)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_meetings_list(request):
+    try:
+        user_id = request.user.id
+        meetings = get_all_meetings_by_user_id(user_id)
+        return Response(meetings, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 

@@ -18,9 +18,10 @@ def create_meeting(meeting_info):
     if not check_if_room_exists(meeting_info.room):
         room = Room(room_name=meeting_info.room.room_name)
         room.save()
+    creator = Participant.objects.filter(id=meeting_info.creator)[0]
     room = Room.objects.filter(room_name=meeting_info.room.room_name).first()
     meeting = Meeting(title=meeting_info.title, start_date_time=meeting_info.start_date_time,
-                      end_date_time=meeting_info.end_date_time, room=room)
+                      end_date_time=meeting_info.end_date_time, room=room, creator=creator)
     meeting.save()
     for participant_id in meeting_info.participants:
         if Participant.objects.filter(id=participant_id):
@@ -61,7 +62,28 @@ def get_meeting_info(meeting_id):
     return meeting[0]
 
 
+def is_user_in_meeting(participants, user_id):
+    try:
+        for participant_id in participants:
+            person = Participant.objects.filter(id=participant_id)[0]
+            if person.id == user_id:
+                return True
+        return False
+    except:
+        return False
+
+
+def get_meetings_by_id(user_id):
+    user_meetings = []
+    meetings = Meeting.objects.all()
+    for meeting in meetings:
+        participants = meeting.participants
+        creator = meeting.creator
+        if (is_user_in_meeting(participants, user_id)) or (creator.id == user_id):
+            user_meetings.append(meeting)
+    output = {'user_id': user_id, 'meetings': [{'title': m.title, 'id': m.id} for m in user_meetings]}
+    return output
+
+
 def get_all_meetings():
     return Meeting.objects.all()
-
-
