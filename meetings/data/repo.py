@@ -64,9 +64,8 @@ def get_meeting_info(meeting_id):
 
 def is_user_in_meeting(participants, user_id):
     try:
-        for participant_id in participants:
-            person = Participant.objects.filter(id=participant_id)[0]
-            if person.id == user_id:
+        for participant in participants.iterator():
+            if participant.id == user_id:
                 return True
         return False
     except:
