@@ -16,7 +16,7 @@ from rest_framework import generics
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_polls(request):
-    user_id = request.GET['user']
+    user_id = request.user.id
     try:
         output = get_all_polls_by_creator_name(user_id)
         return Response(output, status=status.HTTP_200_OK)
@@ -55,8 +55,6 @@ class PollsViewSets(viewsets.GenericViewSet,
 
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer
-
-
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
