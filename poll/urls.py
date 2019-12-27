@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:poll_id>', views.get_poll_details, name='poll_details'),
     path('', views.get_polls, name='all_polls'),
     path('create/', include(router.urls)),
-    path('vote', views.vote_for_poll)
+    path('vote', views.vote_for_poll),
+    path('comment', views.add_comment),
 ]

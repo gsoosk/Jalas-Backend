@@ -1,11 +1,7 @@
-# from poll.domain_logic.polls_service import get_all_polls_by_creator_name
-# from django.http import HttpResponse
-from meetings.models import Participant
-from meetings.domain_logic import email_service
-from poll.models import MeetingPoll, PollChoiceItem, PollTime
-from poll.data.MeetingPolls import MeetingPollRep
+from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
+from meetings.models import Participant
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 
@@ -14,6 +10,15 @@ def get_polls(creator_id):
     polls = MeetingPoll.objects.filter(creator__id=creator_id)
     output = {'creator_id': creator_id, 'polls': [{'title': p.title, 'id': p.id} for p in polls]}
     return output
+
+
+def add_comment(user_id, poll_id, text):
+    if not MeetingPoll.objects.filter(id=poll_id).exists():
+        raise Exceptions.InvalidPoll
+    poll = MeetingPoll.objects.filter()[0]
+    user = Participant.objects.filter(id=user_id)[0]
+    comment = Comment(user=user, poll=poll, text=text)
+    comment.save()
 
 
 def get_all_polls():
