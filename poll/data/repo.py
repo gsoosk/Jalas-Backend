@@ -4,6 +4,7 @@ import poll.Exceptions as Exceptions
 from meetings.models import Participant
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
+import datetime
 
 
 def get_polls(creator_id):
@@ -15,9 +16,11 @@ def get_polls(creator_id):
 def has_access_to_poll(user_id, poll):
     participants = poll.participants
     creator = poll.creator
+    if user_id == creator.id:
+        return True
     try:
         for participant in participants.iterator():
-            if participant.id == user_id or participant.id == creator.id:
+            if participant.id == user_id:
                 return True
         return False
     except:
@@ -27,11 +30,12 @@ def has_access_to_poll(user_id, poll):
 def add_comment(user_id, poll_id, text):
     if not MeetingPoll.objects.filter(id=poll_id).exists():
         raise Exceptions.InvalidPoll
-    poll = MeetingPoll.objects.filter()[0]
+    poll = MeetingPoll.objects.filter(id=poll_id)[0]
     if not has_access_to_poll(user_id, poll):
         raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
-    comment = Comment(user=user, poll=poll, text=text)
+    curr_time = datetime.datetime.now()
+    comment = Comment(user=user, poll=poll, text=text, date_time=curr_time)
     comment.save()
 
 
@@ -98,9 +102,7 @@ def check_if_person_is_participant_of_poll(poll_id, participant_email):
 
 def check_if_person_has_voted_before(poll_id, participant_id):
     if PollChoiceItem.objects.filter(voter=participant_id, poll=poll_id):
-        print("^^^^^^^^^^^^^^^^voted before")
         return True
-    print("^^^^^^^^^^^^^^^^has not voted before")
     return False
 
 
@@ -108,6 +110,15 @@ def send_email_to_poll_creator(voter, poll):
     thread.start_new_thread(send_email, (f'New vote for {poll.title}',
                                          f'There is a vote for {poll.title} from {voter}',
                                          [poll.creator.email]))
+
+
+def get_comments_of_poll(poll_id, user_id):
+    if not MeetingPoll.objects.filter(id=poll_id).exists():
+        raise Exceptions.InvalidPoll
+    poll = MeetingPoll.objects.filter(id=poll_id)[0]
+    if not has_access_to_poll(user_id, poll):
+        raise Exceptions.InvalidPoll
+    return Comment.objects.filter(poll=poll)
 
 
 def add_new_votes_to_poll(voter, poll_id, votes):
