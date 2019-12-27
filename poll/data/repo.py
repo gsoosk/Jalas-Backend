@@ -12,10 +12,24 @@ def get_polls(creator_id):
     return output
 
 
+def has_access_to_poll(user_id, poll):
+    participants = poll.participants
+    creator = poll.creator
+    try:
+        for participant in participants.iterator():
+            if participant.id == user_id or participant.id == creator.id:
+                return True
+        return False
+    except:
+        return False
+
+
 def add_comment(user_id, poll_id, text):
     if not MeetingPoll.objects.filter(id=poll_id).exists():
         raise Exceptions.InvalidPoll
     poll = MeetingPoll.objects.filter()[0]
+    if not has_access_to_poll(user_id, poll):
+        raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
     comment = Comment(user=user, poll=poll, text=text)
     comment.save()
