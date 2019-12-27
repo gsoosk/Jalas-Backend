@@ -20,3 +20,8 @@ class PollChoiceItem(models.Model):
     chosen_time = models.ForeignKey('PollTime', on_delete=models.CASCADE, default=None)
     agrees = models.BooleanField(default=False)
 
+
+class Comment(models.Model):
+    user = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None)
+    text = models.TextField(default="")
+    poll = models.ForeignKey('MeetingPoll', on_delete=models.CASCADE, default=None)

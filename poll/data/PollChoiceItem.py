@@ -15,10 +15,7 @@ class PollChoiceItemRep:
         return True
 
     def toJson(self):
-        data = {}
-        data['id'] = self._id
-        data['start_time'] = ('T'.join(str(self.start_time).split(' ')))
-        data['end_time'] = ('T'.join(str(self.end_time).split(' ')))
-        data['positive_voters'] = self.positive_voters
-        data['negative_voters'] = self.negative_voters
+        data = {'id': self._id, 'start_time': ('T'.join(str(self.start_time).split(' '))),
+                'end_time': ('T'.join(str(self.end_time).split(' '))), 'positive_voters': self.positive_voters,
+                'negative_voters': self.negative_voters}
         return data

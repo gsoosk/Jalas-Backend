@@ -1,4 +1,5 @@
-from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_poll_details_by_poll_id, add_new_votes
+from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_poll_details_by_poll_id, add_new_votes, \
+    add_new_comment_to_poll
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -56,6 +57,7 @@ class PollsViewSets(viewsets.GenericViewSet,
     queryset = repo.get_all_polls()
     serializer_class = PollSerializer
 
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -82,5 +84,21 @@ def vote_for_poll(request):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Exception"})
 
     return Response({}, status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_comment(request):
+    try:
+        user_id = request.user.id
+        poll_id = request.data['poll_id']
+        text = request.data['text']
+        add_new_comment_to_poll(user_id, poll_id, text)
+        return Response({}, status=status.HTTP_200_OK)
+    except Exceptions.InvalidPoll as e:
+        return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
 
 

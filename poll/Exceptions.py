@@ -27,3 +27,7 @@ class VotedBefore(Exception):
 
 class ParticipantsAreNotExsits(Exception):
     pass
+
+
+class InvalidPoll(Exception):
+    pass
