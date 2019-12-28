@@ -1,4 +1,4 @@
-from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_poll_details_by_poll_id, add_new_votes, \
+from poll.domain_logic.polls_service import get_all_polls_by_user_id, get_poll_details_by_poll_id, add_new_votes, \
     add_new_comment_to_poll, get_comments, add_new_reply_to_comment, remove_comment_from_poll
 from rest_framework.response import Response
 from rest_framework import status
