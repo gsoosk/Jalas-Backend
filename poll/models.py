@@ -27,8 +27,9 @@ class Comment(models.Model):
     poll = models.ForeignKey('MeetingPoll', on_delete=models.CASCADE, default=None)
     date_time = models.DateTimeField('Created time', default=now)
 
+
 class Reply(models.Model):
     user = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None)
     text = models.TextField(default="")
-    comment = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None)
+    comment = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None, related_name='replies')
     date_time = models.DateTimeField('Created time', default=now)

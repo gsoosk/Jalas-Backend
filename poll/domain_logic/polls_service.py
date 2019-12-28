@@ -1,4 +1,5 @@
-from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply
+from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply\
+    , remove_poll_comment
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 
@@ -48,5 +49,12 @@ def get_comments(poll_id, user_id):
     try:
         comments = get_comments_of_poll(poll_id, user_id)
         return comments
+    except Exception as e:
+        return e
+
+
+def remove_comment_from_poll(user_id, comment_id):
+    try:
+        remove_poll_comment(user_id, comment_id)
     except Exception as e:
         return e

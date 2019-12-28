@@ -35,3 +35,7 @@ class ParticipantsAreNotExsits(Exception):
 
 class InvalidPoll(Exception):
     pass
+
+
+class AccessDenied(Exception):
+    pass

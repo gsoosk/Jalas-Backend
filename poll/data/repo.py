@@ -14,8 +14,10 @@ def get_polls(creator_id):
 
 
 def has_access_to_poll(user_id, poll):
+
     participants = poll.participants
     creator = poll.creator
+
     if user_id == creator.id:
         return True
     try:
@@ -41,9 +43,12 @@ def add_comment(user_id, poll_id, text):
 
 def add_reply(user_id, comment_id, text):
     if not Comment.objects.filter(id=comment_id).exists():
+        print('invalid comment')
         raise Exceptions.InvalidComment
     comment = Comment.objects.filter(id=comment_id)[0]
-    if not has_access_to_poll(user_id, comment.poll.id):
+
+    if not has_access_to_poll(user_id, comment.poll):
+        print('invalid poll')
         raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
     curr_time = datetime.datetime.now()
@@ -160,3 +165,14 @@ def add_new_votes_to_poll(voter, poll_id, votes):
     else:
         print("participant not found")
         raise Exceptions.NotParticipant
+
+
+def remove_poll_comment(user_id, comment_id):
+    if Comment.objects.get(id=comment_id):
+        comment = Comment.objects.get(id=comment_id)
+        if not comment.user.id == user_id:
+            raise Exception.AccessDenied
+        else:
+            comment.delete()
+    else:
+        raise Exceptions.InvalidComment
