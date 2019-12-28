@@ -13,6 +13,10 @@ class InvalidPoll(Exception):
     pass
 
 
+class InvalidComment(Exception):
+    pass
+
+
 class NotParticipant(Exception):
     pass
 

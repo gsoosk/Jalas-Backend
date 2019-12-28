@@ -47,7 +47,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['email', 'poll', 'text', 'date_time']
+        fields = ['id', 'email', 'poll', 'text', 'date_time']
 
 
 class PollSerializer(serializers.ModelSerializer):

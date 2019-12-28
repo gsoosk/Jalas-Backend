@@ -1,4 +1,4 @@
-from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll
+from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 
@@ -34,6 +34,12 @@ def add_new_votes(voter, poll_id, votes):
 def add_new_comment_to_poll(user_id, poll_id, text):
     try:
         add_comment(user_id, poll_id, text)
+    except Exception as e:
+        raise e
+
+def add_new_reply_to_comment(user_id, comment_id, text):
+    try:
+        add_reply(user_id, comment_id, text)
     except Exception as e:
         raise e
 

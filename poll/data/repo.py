@@ -1,4 +1,4 @@
-from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment
+from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment, Reply
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
 from meetings.models import Participant
@@ -37,6 +37,18 @@ def add_comment(user_id, poll_id, text):
     curr_time = datetime.datetime.now()
     comment = Comment(user=user, poll=poll, text=text, date_time=curr_time)
     comment.save()
+
+
+def add_reply(user_id, comment_id, text):
+    if not Comment.objects.filter(id=comment_id).exists():
+        raise Exceptions.InvalidComment
+    comment = Comment.objects.filter(id=comment_id)[0]
+    if not has_access_to_poll(user_id, comment.poll.id):
+        raise Exceptions.InvalidPoll
+    user = Participant.objects.filter(id=user_id)[0]
+    curr_time = datetime.datetime.now()
+    reply = Reply(user=user, comment=comment, text=text, date_time=curr_time)
+    reply.save()
 
 
 def get_all_polls():
@@ -119,6 +131,12 @@ def get_comments_of_poll(poll_id, user_id):
     if not has_access_to_poll(user_id, poll):
         raise Exceptions.InvalidPoll
     return Comment.objects.filter(poll=poll)
+
+def get_replies_of_comment(comment_id, user_id):
+    if not Comment.objects.filter(id=comment_id).exists():
+        raise Exceptions.InvalidComment
+    comment = Comment.objects.filter(id=comment_id)[0]
+    return Reply.objects.filter(comment=comment)
 
 
 def add_new_votes_to_poll(voter, poll_id, votes):
