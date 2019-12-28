@@ -19,5 +19,6 @@ def get_report(request):
 
     return Response({"Average Creation Time": str(average), "Number of reserved rooms":  str(report.num_reserved_rooms),
                      "Number of cancelled/modified meetings": str(report.num_cancelled_or_modified_meetings),
-                     "Average response time": str(report.average_response_time) + " micro seconds"})
+                     "Average response time": str(report.average_response_time) + " micro seconds",
+                     "Throughput": str(report.throughput)})
 

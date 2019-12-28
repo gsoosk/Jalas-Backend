@@ -22,6 +22,8 @@ class ReportsData:
             self.num_cancelled_or_modified_meetings = report.num_cancelled_or_modified_meetings
             self.num_reserved_rooms = report.num_reserved_rooms
             self.average_response_time = report.average_response_time
+            self.up_time = datetime.datetime.now()
+            self.throughput = 0
             self.req_time = {}
             self.reserving = False
             ReportsData.__instance = self
@@ -46,5 +48,14 @@ class ReportsData:
 
     def get_avg_meeting_creation_time(self):
         return self.sum_meeting_creation_time / self.num_created_meetings
+
+    def update_throughput(self):
+        if float((datetime.datetime.now() - self.up_time).seconds):
+            throughput = float(repo.get_req_count()) / float((datetime.datetime.now() - self.up_time).seconds)
+        else:
+            throughput = 0
+        repo.set_throughput(throughput)
+        self.throughput = throughput
+        return throughput
 
 

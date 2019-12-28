@@ -38,6 +38,17 @@ def get_average_response_time():
     return report.average_response_time
 
 
+def set_throughput(amount):
+    report = get_report()
+    report.throughput = amount
+    report.save()
+
+
+def get_req_count():
+    report = get_report()
+    return report.req_count
+
+
 def get_average_creation_time():
     report = get_report()
     return report.sum_meeting_creation_time / report.num_created_meetings

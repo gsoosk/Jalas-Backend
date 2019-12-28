@@ -17,6 +17,7 @@ class ReportMiddleware:
 
         response_time = (datetime.datetime.now() - curr_time).microseconds
         ReportsData.get_instance().update_average_response(response_time)
+        ReportsData.get_instance().update_throughput()
 
         # Code to be executed for each request/response after
         # the view is called.
