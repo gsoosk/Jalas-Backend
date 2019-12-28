@@ -7,12 +7,6 @@ import _thread as thread
 import datetime
 
 
-def get_polls(creator_id):
-    polls = MeetingPoll.objects.filter(creator__id=creator_id)
-    output = {'creator_id': creator_id, 'polls': [{'title': p.title, 'id': p.id} for p in polls]}
-    return output
-
-
 def has_access_to_poll(user_id, poll):
     participants = poll.participants
     creator = poll.creator
@@ -25,6 +19,16 @@ def has_access_to_poll(user_id, poll):
         return False
     except:
         return False
+
+
+def get_polls(user_id):
+    user_polls = []
+    polls = MeetingPoll.objects.all()
+    for poll in polls:
+        if has_access_to_poll(user_id, poll):
+            user_polls.append(poll)
+    output = {'user_id': user_id, 'polls': [{'title': p.title, 'poll_id': p.id, 'creator_id': p.creator.id} for p in user_polls]}
+    return output
 
 
 def add_comment(user_id, poll_id, text):
@@ -126,8 +130,8 @@ def add_new_votes_to_poll(voter, poll_id, votes):
         poll = MeetingPoll.objects.get(id=poll_id)
     else:
         raise Exceptions.InvalidPoll
-    if poll.participants.filter(email=voter):
-        voter_participant = poll.participants.filter(email=voter)[0]
+    if poll.participants.filter(id=voter):
+        voter_participant = poll.participants.filter(id=voter)[0]
         if check_if_person_has_voted_before(poll_id, voter_participant.id):
             raise Exceptions.VotedBefore
 

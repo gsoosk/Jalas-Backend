@@ -3,9 +3,9 @@ from meetings.domain_logic.email_service import send_email
 import _thread as thread
 
 
-def get_all_polls_by_creator_name(creator_id):
+def get_all_polls_by_user_id(user_id):
     try:
-        return get_polls(creator_id)
+        return get_polls(user_id)
     except Exception as e:
         raise Exception()
 

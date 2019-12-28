@@ -1,4 +1,4 @@
-from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_poll_details_by_poll_id, add_new_votes, \
+from poll.domain_logic.polls_service import get_all_polls_by_user_id, get_poll_details_by_poll_id, add_new_votes, \
     add_new_comment_to_poll, get_comments
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 def get_polls(request):
     user_id = request.user.id
     try:
-        output = get_all_polls_by_creator_name(user_id)
+        output = get_all_polls_by_user_id(user_id)
         return Response(output, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
@@ -61,9 +61,11 @@ class PollsViewSets(viewsets.GenericViewSet,
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def vote_for_poll(request):
-    if 'voterName' not in request.data.keys() or 'pollID' not in request.data.keys():
+    # if 'voterName' not in request.data.keys() or 'pollID' not in request.data.keys():
+    if 'pollID' not in request.data.keys():
         return Response({"message": "Provided information is not enough"}, status=status.HTTP_400_BAD_REQUEST)
-    voter = request.data['voterName']
+
+    voter = request.user.id
     poll_id = request.data['pollID']
     votes = request.data['votes']
 
