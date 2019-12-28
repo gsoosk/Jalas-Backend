@@ -33,6 +33,30 @@ def add_to_creation_time_sum(sum):
     report.save()
 
 
+def get_average_response_time():
+    report = get_report()
+    return report.average_response_time
+
+
+def set_throughput(amount):
+    report = get_report()
+    report.throughput = amount
+    report.save()
+
+
+def get_req_count():
+    report = get_report()
+    return report.req_count
+
+
 def get_average_creation_time():
     report = get_report()
-    return (report.sum_meeting_creation_time / report.num_created_meetings)
+    return report.sum_meeting_creation_time / report.num_created_meetings
+
+
+def update_average_response_time(time):
+    report = get_report()
+    new_sum = report.average_response_time * report.req_count + time
+    report.req_count += 1
+    report.average_response_time = new_sum / report.req_count
+    report.save()
