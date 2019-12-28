@@ -13,6 +13,10 @@ class InvalidPoll(Exception):
     pass
 
 
+class InvalidComment(Exception):
+    pass
+
+
 class NotParticipant(Exception):
     pass
 
@@ -30,4 +34,8 @@ class ParticipantsAreNotExsits(Exception):
 
 
 class InvalidPoll(Exception):
+    pass
+
+
+class AccessDenied(Exception):
     pass

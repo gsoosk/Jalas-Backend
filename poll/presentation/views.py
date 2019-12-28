@@ -1,5 +1,5 @@
-from poll.domain_logic.polls_service import get_all_polls_by_user_id, get_poll_details_by_poll_id, add_new_votes, \
-    add_new_comment_to_poll, get_comments
+from poll.domain_logic.polls_service import get_all_polls_by_creator_name, get_poll_details_by_poll_id, add_new_votes, \
+    add_new_comment_to_poll, get_comments, add_new_reply_to_comment, remove_comment_from_poll
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -103,6 +103,22 @@ def add_comment(request):
         return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_reply_comment(request):
+    try:
+        user_id = request.user.id
+        comment_id = request.data['comment_id']
+        text = request.data['text']
+        add_new_reply_to_comment(user_id, comment_id, text)
+        return Response({}, status=status.HTTP_200_OK)
+    except Exceptions.InvalidPoll as e:
+        return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -115,9 +131,25 @@ def get_comments_of_poll(request, poll_id=-1):
         all_comments = []
         for comment in comments:
             serializer = CommentSerializer(comment)
+            # add_replies
             all_comments.append(serializer.data)
         return Response(all_comments, status=status.HTTP_200_OK)
     except Exceptions.InvalidPoll as e:
         return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_comment(request):
+    user_id = request.user.id
+    comment_id = request.data['comment_id']
+    try:
+        remove_comment_from_poll(user_id, comment_id)
+        return Response({}, status=status.HTTP_200_OK)
+    except Exceptions.InvalidComment as e:
+        return Response({"message": "You do not have access to this comment."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
