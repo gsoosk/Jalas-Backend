@@ -71,7 +71,7 @@ def get_choices(poll_id, user_id):
     if not MeetingPoll.objects.filter(id=poll_id).exists():
         raise Exceptions.PollNotExists
     poll = MeetingPoll.objects.get(id=poll_id)
-    if not (check_if_person_is_participant_of_poll_by_id(poll, user_id) or poll.creator == user_id):
+    if not (check_if_person_is_participant_of_poll_by_id(poll, user_id) or poll.creator_id == user_id):
         raise Exceptions.AccessDenied
 
     poll_title = poll.title
