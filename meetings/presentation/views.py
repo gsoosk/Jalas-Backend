@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
-    get_meeting_details_by_poll_id, get_all_meetings_by_user_id
+    get_meeting_details_by_id, get_all_meetings_by_user_id
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
@@ -89,9 +89,14 @@ def cancel_reservation(request):
 @permission_classes([IsAuthenticated])
 def get_meeting_details(request, meeting_id):
     try:
-        meeting = get_meeting_details_by_poll_id(meeting_id)
+        user_id = request.user.id
+        meeting = get_meeting_details_by_id(meeting_id, user_id)
         serializer = MeetingInfoSerializer(meeting)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exceptions.UnauthorizedUser as e:
+        return Response({"message": "You do not have access to this meeting"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    except Exceptions.MeetingNotExists as e:
+        return Response({"message": "This meeting does not exist"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 

@@ -36,3 +36,11 @@ class MeetingNotFound(Exception):
 
 class InvalidParticipantInfo(Exception):
     pass
+
+
+class UnauthorizedUser(Exception):
+    pass
+
+
+class MeetingNotExists(Exception):
+    pass

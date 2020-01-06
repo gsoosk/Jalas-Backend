@@ -80,7 +80,7 @@ class PollSerializer(serializers.ModelSerializer):
         send_poll_email_to_participants(emails, poll.title, poll.id)
         return poll
 
-    def update(self, instance, validated_data):
+    def update(self, instance, hvalidated_data):
         for attr, value in validated_data.items():
             if attr == 'title':
                 setattr(instance, attr, value)

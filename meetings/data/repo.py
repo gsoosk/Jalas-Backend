@@ -57,9 +57,16 @@ def get_participants_emails(participants):
     return emails
 
 
-def get_meeting_info(meeting_id):
-    meeting = Meeting.objects.filter(id=meeting_id)
-    return meeting[0]
+def get_meeting_info(meeting_id, user_id):
+    if not Meeting.objects.filter(id=meeting_id).exists():
+        raise Exceptions.MeetingNotExists
+    meeting = Meeting.objects.filter(id=meeting_id)[0]
+    participants = meeting.participants
+    creator = meeting.creator
+    if (is_user_in_meeting(participants, user_id)) or (creator.id == user_id):
+        return meeting
+    else:
+        raise Exceptions.UnauthorizedUser
 
 
 def is_user_in_meeting(participants, user_id):

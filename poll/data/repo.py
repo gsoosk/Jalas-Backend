@@ -65,10 +65,15 @@ def get_all_polls():
     return polls
 
 
-def get_choices(poll_id):
+def get_choices(poll_id, user_id):
     choices = []
 
+    if not MeetingPoll.objects.filter(id=poll_id).exists():
+        raise Exceptions.PollNotExists
     poll = MeetingPoll.objects.get(id=poll_id)
+    if not (check_if_person_is_participant_of_poll_by_id(poll, user_id) or poll.creator == user_id):
+        raise Exceptions.AccessDenied
+
     poll_title = poll.title
     poll_times = poll.choices.all()
     participants = poll.participants.all()
@@ -121,6 +126,14 @@ def check_if_person_is_participant_of_poll(poll_id, participant_email):
         raise Exceptions.InvalidPoll
 
 
+def check_if_person_is_participant_of_poll_by_id(poll, user_id):
+    participants = poll.participants.all()
+
+    if participants.filter(id=user_id):
+        return True
+    return False
+
+
 def check_if_person_has_voted_before(poll_id, participant_id):
     if PollChoiceItem.objects.filter(voter=participant_id, poll=poll_id):
         return True
@@ -140,6 +153,7 @@ def get_comments_of_poll(poll_id, user_id):
     if not has_access_to_poll(user_id, poll):
         raise Exceptions.InvalidPoll
     return Comment.objects.filter(poll=poll)
+
 
 def get_replies_of_comment(comment_id, user_id):
     if not Comment.objects.filter(id=comment_id).exists():

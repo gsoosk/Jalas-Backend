@@ -29,9 +29,14 @@ def get_polls(request):
 @permission_classes([IsAuthenticated])
 def get_poll_details(request, poll_id=0):
     try:
-        output = get_poll_details_by_poll_id(poll_id)
+        user_id = request.user.id
+        output = get_poll_details_by_poll_id(poll_id, user_id)
         ReportsData.get_instance().add_meeting_creation_time(request.session.session_key)
         return Response(output, status=status.HTTP_200_OK)
+    except Exceptions.AccessDenied as e:
+        return Response({"message": "You do not have access to this poll"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    except Exceptions.PollNotExists as e:
+        return Response({"message": "This poll does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
@@ -139,6 +144,7 @@ def get_comments_of_poll(request, poll_id=-1):
     except Exception as e:
         print(e)
         return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])

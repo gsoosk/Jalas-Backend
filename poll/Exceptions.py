@@ -39,3 +39,7 @@ class InvalidPoll(Exception):
 
 class AccessDenied(Exception):
     pass
+
+
+class PollNotExists(Exception):
+    pass

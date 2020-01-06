@@ -145,8 +145,8 @@ def create_new_meeting(new_meeting, host, port):
         return meeting_id, False
 
 
-def get_meeting_details_by_poll_id(meeting_id):
-    return get_meeting_info(meeting_id)
+def get_meeting_details_by_id(meeting_id, user_id):
+    return get_meeting_info(meeting_id, user_id)
 
 
 def get_all_meetings_by_user_id(user_id):

@@ -11,9 +11,9 @@ def get_all_polls_by_user_id(user_id):
         raise Exception()
 
 
-def get_poll_details_by_poll_id(poll_id):
+def get_poll_details_by_poll_id(poll_id, user_id):
     try:
-        return get_choices(poll_id)
+        return get_choices(poll_id, user_id)
     except Exception as e:
         raise e
 
@@ -37,6 +37,7 @@ def add_new_comment_to_poll(user_id, poll_id, text):
         add_comment(user_id, poll_id, text)
     except Exception as e:
         raise e
+
 
 def add_new_reply_to_comment(user_id, comment_id, text):
     try:
