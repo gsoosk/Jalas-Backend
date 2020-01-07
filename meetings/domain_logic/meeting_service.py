@@ -99,11 +99,11 @@ def check_participants_valid(participants):
     raise Exceptions.InvalidParticipantInfo()
 
 
-def send_email_to_creator(start, end, room_name):
+def send_email_to_creator(start, end, room_name, creator_email):
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
                + start + " - "
                + end + "\nRoom: "
-               + room_name + "\n", ["qsoosk@gmail.com"])
+               + room_name + "\n", [creator_email])
 
 
 def send_email_to_participants(start, end, room_name, participants, host, port, meeting_id):
@@ -122,8 +122,9 @@ def send_cancel_notification(participants, meeting_id):
                + "http://http://localhost:3000/meetings/" + meeting_id, emails)
 
 
-def send_email_thread(start, end, room_name, participants, host, port, meeting_id):
-    send_email_to_creator(start, end, room_name)
+def send_email_thread(start, end, room_name, participants, host, port, meeting_id, creator_id):
+    creator_email = get_participants_emails([creator_id])
+    send_email_to_creator(start, end, room_name, creator_email)
     send_email_to_participants(start, end, room_name, participants, host, port, meeting_id)
 
 
@@ -150,7 +151,7 @@ def create_new_meeting(new_meeting, host, port):
     # Sending Mail
     thread.start_new_thread(send_email_thread, (str(new_meeting.start_date_time), str(new_meeting.end_date_time),
                                                 str(new_meeting.room.room_name), new_meeting.participants, host, port,
-                                                str(meeting_id)))
+                                                str(meeting_id), new_meeting.creator))
     # Reserving
     try:
         reserve_room(new_meeting.start_date_time, new_meeting.end_date_time, new_meeting.room)
