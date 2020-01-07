@@ -209,3 +209,4 @@ def create_choice_time(choice_data):
 
 def edit_title(instance, attr, value):
     setattr(instance, attr, value)
+    instance.save()

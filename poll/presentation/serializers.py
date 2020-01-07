@@ -4,7 +4,7 @@ from meetings.models import Participant
 from poll.models import PollTime
 from poll.data.repo import get_new_poll
 from poll.domain_logic.polls_service import send_poll_email_to_participants, edit_poll_title, edit_poll_choices, \
-    edit_poll_participants
+    edit_poll_participants, update_poll
 import poll.Exceptions as Exceptions
 
 
@@ -82,14 +82,5 @@ class PollSerializer(serializers.ModelSerializer):
         return poll
 
     def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            if attr == 'title':
-                edit_poll_title(instance, attr, value)
-            elif attr == 'choices':
-                edit_poll_choices(instance, value)
-            elif attr == 'participants':
-                edit_poll_participants(instance, value)
-
-        instance.save()
-        return instance
+        return update_poll(validated_data, instance)
 
