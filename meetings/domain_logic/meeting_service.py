@@ -1,13 +1,14 @@
 from meetings.data.Room import Room
 import requests
 import json
+import re
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 from report.domain_logic.Reports import ReportsData
 from report.data import repo
 from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
-    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id
+    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id, get_emails
 
 
 def is_time_valid(start, end):
@@ -16,6 +17,8 @@ def is_time_valid(start, end):
 
 def cancel_room_reservation(meeting_id, user_id):
     cancel_meeting(meeting_id, user_id)
+    meeting = get_meeting_info(meeting_id, user_id)
+    send_cancel_notification(meeting.participants, meeting_id)
     # cancel_numbers += 1
 
 
@@ -48,6 +51,12 @@ def send_reserve_request(start, end, room_name):
             raise e
         except:
             pass
+
+
+def extract_mention(text):
+    results = re.findall(r'@([^:\s]+)', text)
+    results = list(set(results))
+    return results
 
 
 def get_available_rooms_service(start, end):
@@ -104,6 +113,13 @@ def send_email_to_participants(start, end, room_name, participants, host, port, 
                + end + "\nRoom: "
                + room_name + "\nYou can view this meeting in the following URL:\n"
                + "http://" + host + ":" + port + "/meetings/" + meeting_id, emails)
+
+
+def send_cancel_notification(participants, meeting_id):
+    emails = get_emails(participants)
+    send_email("Meeting Cancelled", "A meeting you were invited to in cancelled:\n"
+               "\nYou can view this meeting in the following URL:\n"
+               + "http://http://localhost:3000/meetings/" + meeting_id, emails)
 
 
 def send_email_thread(start, end, room_name, participants, host, port, meeting_id):

@@ -72,6 +72,13 @@ def get_meeting_info(meeting_id, user_id):
         raise Exceptions.UnauthorizedUser
 
 
+def get_emails(participants):
+    emails = []
+    for participant in participants.iterator():
+        emails.append(participant.email)
+    return emails
+
+
 def is_user_in_meeting(participants, user_id):
     try:
         for participant in participants.iterator():
