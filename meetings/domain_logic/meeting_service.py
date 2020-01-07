@@ -53,12 +53,6 @@ def send_reserve_request(start, end, room_name):
             pass
 
 
-def extract_mention(text):
-    results = re.findall(r'@([^:\s]+)', text)
-    results = list(set(results))
-    return results
-
-
 def get_available_rooms_service(start, end):
     while True:
         try:

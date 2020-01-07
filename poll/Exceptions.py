@@ -43,3 +43,7 @@ class AccessDenied(Exception):
 
 class PollNotExists(Exception):
     pass
+
+
+class UserNotValid(Exception):
+    pass

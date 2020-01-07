@@ -1,7 +1,9 @@
+from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply\
-    , remove_poll_comment
+    , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
+import re
 
 
 def get_all_polls_by_user_id(user_id):
@@ -32,8 +34,19 @@ def add_new_votes(voter, poll_id, votes):
         raise e
 
 
+def extract_mention(text):
+    results = re.findall(r'@([^:\s]+)', text)
+    results = list(set(results))
+    return results
+
+
 def add_new_comment_to_poll(user_id, poll_id, text):
     try:
+        mentions = extract_mention(text)
+        for person in mentions:
+            person_id = find_id_by_email(person)
+            if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
+                raise Exceptions.UserNotValid
         add_comment(user_id, poll_id, text)
     except Exception as e:
         raise e

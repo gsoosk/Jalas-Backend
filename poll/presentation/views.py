@@ -102,9 +102,12 @@ def add_comment(request):
         text = request.data['text']
         add_new_comment_to_poll(user_id, poll_id, text)
         return Response({}, status=status.HTTP_200_OK)
-    except Exceptions.InvalidPoll as e:
+    except Exceptions.UserNotValid:
+        return Response({"message": "The user you mentioned does not exist or does not have access to this poll."},
+                        status=status.HTTP_404_NOT_FOUND)
+    except Exceptions.InvalidPoll:
         return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
+    except Exception:
         return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
 
 

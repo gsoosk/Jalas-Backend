@@ -126,10 +126,12 @@ def check_if_person_is_participant_of_poll(poll_id, participant_email):
         raise Exceptions.InvalidPoll
 
 
-def check_if_person_is_participant_of_poll_by_id(poll, user_id):
-    participants = poll.participants.all()
-
-    if participants.filter(id=user_id):
+def check_if_person_is_participant_of_poll_by_id(poll_id, user_id):
+    if not MeetingPoll.objects.filter(id=poll_id).exists():
+        raise Exceptions.PollNotExists
+    poll = MeetingPoll.objects.filter(id=poll_id)[0]
+    participants = poll.participants
+    if participants.filter(id=user_id) or poll.creator.id == user_id:
         return True
     return False
 
@@ -194,3 +196,11 @@ def remove_poll_comment(user_id, comment_id):
             comment.delete()
     else:
         raise Exceptions.InvalidComment
+
+
+def find_id_by_email(email):
+    if Participant.objects.filter(email=email).exists():
+        person = Participant.objects.get(email=email)
+        return person.id
+    else:
+        raise Exceptions.UserNotValid
