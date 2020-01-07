@@ -1,6 +1,6 @@
 from poll import Exceptions
-from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply\
-    , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email
+from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
+    , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -30,7 +30,7 @@ def send_poll_email_to_participants(emails, title, poll_id):
 def send_mention_notification(email, poll_id):
     send_email("Mention Notification", "You are mentioned in a comment:\n"
                "\nYou can view this comment in the following URL:\n"
-               + "http://http://localhost:3000/comments/" + poll_id, [email])
+               + "http://localhost:3000/comments/" + poll_id, [email])
 
 
 def add_new_votes(voter, poll_id, votes):
@@ -80,3 +80,32 @@ def remove_comment_from_poll(user_id, comment_id):
         remove_poll_comment(user_id, comment_id)
     except Exception as e:
         return e
+
+
+def edit_poll_title(instance, attr, value):
+    setattr(instance, attr, value)
+
+
+def edit_poll_choices(instance, value):
+    for choice in instance.choices.iterator():
+        instance.choices.remove(choice)
+        choice.delete()
+
+    for choice_data in value:
+        new_poll = create_choice_time(choice_data)
+        instance.choices.add(new_poll)
+
+
+def edit_poll_participants(instance, value):
+    old_participant_emails, new_participant_emails = [], []
+    for participant in instance.participants.iterator():
+        old_participant_emails.append(participant.email)
+        instance.participants.remove(participant)
+    for new_participant in value:
+        new_participant_emails.append(new_participant.email)
+        instance.participants.add(new_participant)
+    emails = []
+    for new_participant_email in new_participant_emails:
+        if new_participant_email not in old_participant_emails:
+            emails.append(new_participant_email)
+    send_poll_email_to_participants(emails, instance.title, instance.id)

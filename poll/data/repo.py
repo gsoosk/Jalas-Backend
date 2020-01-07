@@ -204,3 +204,7 @@ def find_id_by_email(email):
         return person.id
     else:
         raise Exceptions.UserNotValid
+
+
+def create_choice_time(choice_data):
+    return PollTime.objects.create(**choice_data)
