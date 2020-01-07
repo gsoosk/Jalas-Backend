@@ -205,3 +205,7 @@ def find_id_by_email(email):
 
 def create_choice_time(choice_data):
     return PollTime.objects.create(**choice_data)
+
+
+def edit_title(instance, attr, value):
+    setattr(instance, attr, value)
