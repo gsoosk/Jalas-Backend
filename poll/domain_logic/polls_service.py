@@ -53,6 +53,7 @@ def add_new_comment_to_poll(user_id, poll_id, text):
             person_id = find_id_by_email(person)
             if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
                 raise Exceptions.UserNotValid
+        for person in mentions:
             send_mention_notification(person, poll_id)
         add_comment(user_id, poll_id, text)
     except Exception as e:
