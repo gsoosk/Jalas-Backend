@@ -6,12 +6,10 @@ from meetings.domain_logic.meeting_service import create_new_meeting, cancel_roo
     get_meeting_details_by_id, get_all_meetings_by_user_id
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.response import Response
 from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
-from rest_framework.views import APIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -71,15 +69,19 @@ def get_available_rooms(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def cancel_reservation(request):
+    user_id = request.user.id
     if 'meeting_id' not in request.data.keys():
         return Response({"message": "No id in request"}, status=status.HTTP_400_BAD_REQUEST)
     data = request.data
     try:
-        if not ReportsData.get_instance().reserving:
-            return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
-        cancel_room_reservation(data['meeting_id'])
+        if 'after_creation' not in request.data.keys() or not data['after_creation']:
+            if not ReportsData.get_instance().reserving:
+                return Response({"message": "Already Reserved"}, status=status.HTTP_408_REQUEST_TIMEOUT)
+        cancel_room_reservation(data['meeting_id'], user_id)
         ReportsData.get_instance().inc_cancelled(request.session.session_key)
         return Response(status=status.HTTP_200_OK)
+    except Exceptions.UnauthorizedUser:
+        return Response({"message:": "You are not allowed to cancel this meeting"}, status.HTTP_405_METHOD_NOT_ALLOWED)
     except Exceptions.MeetingNotFound:
         return Response({"message:": "could not cancel"}, status.HTTP_405_METHOD_NOT_ALLOWED)
 

@@ -14,8 +14,8 @@ def is_time_valid(start, end):
     return end > start
 
 
-def cancel_room_reservation(meeting_id):
-    cancel_meeting(meeting_id)
+def cancel_room_reservation(meeting_id, user_id):
+    cancel_meeting(meeting_id, user_id)
     # cancel_numbers += 1
 
 

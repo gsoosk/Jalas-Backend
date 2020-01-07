@@ -32,11 +32,14 @@ def create_meeting(meeting_info):
     return meeting.id
 
 
-def cancel_meeting(meeting_id):
+def cancel_meeting(meeting_id, user_id):
     if Meeting.objects.filter(id=meeting_id):
         meeting = Meeting.objects.filter(id=meeting_id)[0]
-        meeting.is_cancelled = True
-        meeting.save()
+        if meeting.creator.id == user_id:
+            meeting.is_cancelled = True
+            meeting.save()
+        else:
+            raise Exceptions.UnauthorizedUser
     else:
         raise Exceptions.MeetingNotFound
 

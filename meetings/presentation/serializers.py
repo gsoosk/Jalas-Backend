@@ -30,10 +30,11 @@ class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
 class MeetingInfoSerializer(serializers.ModelSerializer):
     participants = ParticipantSerializer(many=True)
     room = RoomSerializer(many=False)
+    creator = ParticipantSerializer(many=False)
 
     class Meta:
         model = Meeting
-        fields = ['title', 'start_date_time', 'end_date_time', 'room', 'participants', 'is_cancelled']
+        fields = ['id', 'title', 'start_date_time', 'end_date_time', 'room', 'participants', 'is_cancelled', 'creator']
 
 
 class LoginSerializer(serializers.ModelSerializer):
