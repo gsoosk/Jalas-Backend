@@ -83,14 +83,14 @@ def remove_comment_from_poll(user_id, comment_id):
         return e
 
 
-def update_poll(validated_data, instance):
+def update_poll(validated_data, instance, user):
     for attr, value in validated_data.items():
         if attr == 'title':
             edit_poll_title(instance, attr, value)
         elif attr == 'choices':
             edit_poll_choices(instance, value)
         elif attr == 'participants':
-            edit_poll_participants(instance, value)
+            edit_poll_participants(instance, value, user)
     return instance
 
 
@@ -103,9 +103,9 @@ def edit_poll_choices(instance, value):
     add_new_choices(instance, value)
 
 
-def edit_poll_participants(instance, participants_value):
+def edit_poll_participants(instance, participants_value, user):
     old_participant_emails = remove_old_participants(instance)
-    new_participant_emails = add_new_participants(instance, participants_value)
+    new_participant_emails = add_new_participants(instance, participants_value, user)
     send_email_of_update(instance, old_participant_emails, new_participant_emails)
 
 

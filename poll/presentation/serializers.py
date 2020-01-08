@@ -82,5 +82,5 @@ class PollSerializer(serializers.ModelSerializer):
         return poll
 
     def update(self, instance, validated_data):
-        return update_poll(validated_data, instance)
+        return update_poll(validated_data, instance, self.context['request'].user)
 

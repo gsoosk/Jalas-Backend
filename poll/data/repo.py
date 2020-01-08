@@ -111,6 +111,8 @@ def get_new_poll(choices_data, creator, participants, title):
         emails.append(new_participant.email)
         poll.participants.add(new_participant)
 
+    poll.participants.add(creator)
+
     return poll, emails
 
 
@@ -221,12 +223,15 @@ def remove_old_participants(instance):
     return old_participant_emails
 
 
-def add_new_participants(instance, participants_value):
+def add_new_participants(instance, participants_value, user):
     new_participant_emails = []
     for new_participant in participants_value:
         new_participant_emails.append(new_participant.email)
         instance.participants.add(new_participant)
-    instance.save()
+    instance.participants.add(user)
+    if user.email not in new_participant_emails :
+        new_participant_emails.append(user.email)
+        instance.save()
     return new_participant_emails
 
 
