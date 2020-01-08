@@ -1,7 +1,7 @@
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
-    edit_title
+    edit_title, add_new_participants, remove_old_participants, remove_not_included_choices, add_new_choices
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -99,27 +99,17 @@ def edit_poll_title(instance, attr, value):
 
 
 def edit_poll_choices(instance, value):
-    for choice in instance.choices.iterator():
-        instance.choices.remove(choice)
-        choice.delete()
-
-    for choice_data in value:
-        new_poll = create_choice_time(choice_data)
-        instance.choices.add(new_poll)
-
-    instance.save()
+    remove_not_included_choices(instance, value)
+    add_new_choices(instance, value)
 
 
-def edit_poll_participants(instance, value):
-    old_participant_emails, new_participant_emails = [], []
-    for participant in instance.participants.iterator():
-        old_participant_emails.append(participant.email)
-        instance.participants.remove(participant)
-    for new_participant in value:
-        new_participant_emails.append(new_participant.email)
-        instance.participants.add(new_participant)
+def edit_poll_participants(instance, participants_value):
+    old_participant_emails = remove_old_participants(instance)
+    new_participant_emails = add_new_participants(instance, participants_value)
+    send_email_of_update(instance, old_participant_emails, new_participant_emails)
 
-    instance.save()
+
+def send_email_of_update(instance, old_participant_emails, new_participant_emails):
     emails = []
     for new_participant_email in new_participant_emails:
         if new_participant_email not in old_participant_emails:

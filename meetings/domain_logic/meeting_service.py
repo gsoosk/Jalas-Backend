@@ -9,7 +9,7 @@ from report.domain_logic.Reports import ReportsData
 from report.data import repo
 from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
     check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id, get_emails
-
+import _thread as thread
 
 def is_time_valid(start, end):
     return end > start
@@ -111,9 +111,9 @@ def send_email_to_participants(start, end, room_name, participants, host, port, 
 
 def send_cancel_notification(participants, meeting_id):
     emails = get_emails(participants)
-    send_email("Meeting Cancelled", "A meeting you were invited to in cancelled:\n"
+    thread.start_new_thread(send_email, ("Meeting Cancelled", "A meeting you were invited to in cancelled:\n"
                "\nYou can view this meeting in the following URL:\n"
-               + "http://http://localhost:3000/meetings/" + meeting_id, emails)
+               + "http://http://localhost:3000/meetings/" + str(meeting_id), emails))
 
 
 def send_email_thread(start, end, room_name, participants, host, port, meeting_id, creator_id):

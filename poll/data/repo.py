@@ -210,3 +210,53 @@ def create_choice_time(choice_data):
 def edit_title(instance, attr, value):
     setattr(instance, attr, value)
     instance.save()
+
+
+def remove_old_participants(instance):
+    old_participant_emails = []
+    for participant in instance.participants.iterator():
+        old_participant_emails.append(participant.email)
+        instance.participants.remove(participant)
+    instance.save()
+    return old_participant_emails
+
+
+def add_new_participants(instance, participants_value):
+    new_participant_emails = []
+    for new_participant in participants_value:
+        new_participant_emails.append(new_participant.email)
+        instance.participants.add(new_participant)
+    instance.save()
+    return new_participant_emails
+
+
+def is_choice_in_values(choice, choices_value):
+    for choice_value in choices_value:
+        if choice_value['start_date_time'] == choice.start_date_time and \
+                choice_value['end_date_time'] == choice.end_date_time:
+            return True
+    return False
+
+
+def remove_not_included_choices(instance, choices_value):
+    for choice in instance.choices.iterator():
+        if not is_choice_in_values(choice, choices_value):
+            instance.remove(choice)
+            choice.delete()
+    instance.save()
+
+
+def is_choice_value_in_choices(choice_value, choices):
+    for choice in choices.iterator():
+        if choice_value['start_date_time'] == choice.start_date_time and \
+                choice_value['end_date_time'] == choice.end_date_time:
+            return True
+    return False
+
+
+def add_new_choices(instance, choices_value):
+    for choice_value in choices_value:
+        if not is_choice_value_in_choices(choice_value, instance.choices):
+            new_choice = create_choice_time(choice_value)
+            instance.choices.add(new_choice)
+    instance.save()
