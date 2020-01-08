@@ -68,7 +68,7 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingPoll
-        fields = ['id','title', 'choices', 'creator_id', 'participants']
+        fields = ['id','title', 'choices', 'creator_id', 'participants', 'closed']
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')
