@@ -126,7 +126,11 @@ def check_if_person_is_participant_of_poll(poll_id, participant_email):
         raise Exceptions.InvalidPoll
 
 
-def check_if_person_is_participant_of_poll_by_id(poll, user_id):
+def check_if_person_is_participant_of_poll_by_id(poll_id, user_id):
+    if MeetingPoll.objects.get(id=poll_id):
+        poll = MeetingPoll.objects.get(id=poll_id)
+    else:
+        raise Exceptions.InvalidPoll
     participants = poll.participants
     if participants.filter(id=user_id) or poll.creator.id == user_id:
         return True
