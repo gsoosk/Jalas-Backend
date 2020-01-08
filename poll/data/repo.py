@@ -99,8 +99,9 @@ def get_choices(poll_id, user_id):
     return output
 
 
-def get_new_poll(choices_data, creator, participants, title, deadline):
-    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False, deadline=deadline)
+def get_new_poll(choices_data, creator, participants, title, deadline, hasDeadline):
+    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False, deadline=deadline,
+                                      hasDeadline=hasDeadline)
 
     for choice_data in choices_data:
         new_poll = PollTime.objects.create(**choice_data)
