@@ -47,15 +47,19 @@ def extract_mention(text):
     return results
 
 
+def check_mention(poll_id, text):
+    mentions = extract_mention(text)
+    for person in mentions:
+        person_id = find_id_by_email(person)
+        if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
+            raise Exceptions.UserNotValid
+    send_mention_notification(mentions, poll_id)
+    thread.start_new_thread(send_mention_notification, (mentions, poll_id))
+
+
 def add_new_comment_to_poll(user_id, poll_id, text):
     try:
-        mentions = extract_mention(text)
-        for person in mentions:
-            person_id = find_id_by_email(person)
-            if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
-                raise Exceptions.UserNotValid
-        send_mention_notification(mentions, poll_id)
-        thread.start_new_thread(send_mention_notification, (mentions, poll_id))
+        check_mention(poll_id, text)
         add_comment(user_id, poll_id, text)
     except Exception as e:
         raise e
