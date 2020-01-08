@@ -139,14 +139,25 @@ def get_comments_of_poll(request, poll_id=-1):
         all_comments = []
         for comment in comments:
             serializer = CommentSerializer(comment)
-            # add_replies
-            all_comments.append(serializer.data)
+            comment_data = {'can_delete': repo.can_user_delete_comment(comment, request.user)}
+            comment_data.update(serializer.data)
+            all_comments.append(comment_data)
         return Response(all_comments, status=status.HTTP_200_OK)
     except Exceptions.InvalidPoll as e:
         return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         print(e)
         return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_comment(request, id):
+    comment = repo.get_comment(id)
+    comment_data = {'can_delete': repo.can_user_delete_comment(comment, request.user)}
+    comment_data.update(CommentSerializer(comment).data)
+    return Response(comment_data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from poll.models import MeetingPoll, Comment, Reply
+from poll.models import MeetingPoll, Comment
 from meetings.models import Participant
 from poll.models import PollTime
 from poll.data.repo import get_new_poll
@@ -43,21 +43,15 @@ class ParticipantModelSerializer(serializers.ModelSerializer):
         fields = ['email']
 
 
-class ReplyCommentSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(read_only=True, source="user.email")
-
-    class Meta:
-        model = Reply
-        fields = ['email', 'text', 'date_time']
-
 
 class CommentSerializer(serializers.ModelSerializer):
+
     email = serializers.CharField(read_only=True, source="user.email")
-    replies = ReplyCommentSerializer(many=True)
+    replies = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'email', 'poll', 'text', 'date_time', 'replies']
+        fields = ['id', 'email', 'text', 'date_time', 'replies']
 
 
 class PollSerializer(serializers.ModelSerializer):
@@ -68,7 +62,7 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingPoll
-        fields = ['id','title', 'choices', 'creator_id', 'participants']
+        fields = ['id', 'title', 'choices', 'creator_id', 'participants']
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')

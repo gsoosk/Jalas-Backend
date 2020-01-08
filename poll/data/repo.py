@@ -1,4 +1,4 @@
-from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment, Reply
+from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
 from meetings.models import Participant
@@ -41,8 +41,9 @@ def add_comment(user_id, poll_id, text):
         raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
     curr_time = datetime.datetime.now()
-    comment = Comment(user=user, poll=poll, text=text, date_time=curr_time)
+    comment = Comment(user=user, text=text, date_time=curr_time)
     comment.save()
+    poll.comments.add(comment)
 
 
 def add_reply(user_id, comment_id, text):
@@ -56,7 +57,7 @@ def add_reply(user_id, comment_id, text):
         raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
     curr_time = datetime.datetime.now()
-    reply = Reply(user=user, comment=comment, text=text, date_time=curr_time)
+    reply = Comment(user=user, text=text, datetime=curr_time, parent=comment)
     reply.save()
 
 
@@ -153,7 +154,7 @@ def get_comments_of_poll(poll_id, user_id):
     poll = MeetingPoll.objects.filter(id=poll_id)[0]
     if not has_access_to_poll(user_id, poll):
         raise Exceptions.InvalidPoll
-    return Comment.objects.filter(poll=poll)
+    return poll.comments.all()
 
 
 def get_replies_of_comment(comment_id, user_id):
@@ -265,3 +266,21 @@ def add_new_choices(instance, choices_value):
             new_choice = create_choice_time(choice_value)
             instance.choices.add(new_choice)
     instance.save()
+
+
+def get_comment(comment_id):
+    return Comment.objects.get(id=comment_id)
+
+
+def can_user_delete_comment(comment, user):
+    if user == comment.user:
+        return True
+    while comment.parent is not None:
+        comment = comment.parent
+    try:
+        poll = MeetingPoll.objects.get(comments=comment)
+        if poll.creator == user:
+            return True
+    except:
+        return False
+    return False
