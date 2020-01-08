@@ -17,4 +17,5 @@ urlpatterns = [
     path('reply_comment', views.add_reply_comment),
     path('comments/<int:poll_id>/', views.get_comments_of_poll),
     path('remove_comment/', views.remove_comment),
+    path('close', views.close_poll)
 ]

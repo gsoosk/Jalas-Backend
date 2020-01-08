@@ -1,7 +1,8 @@
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
-    edit_title, add_new_participants, remove_old_participants, remove_not_included_choices, add_new_choices
+    edit_title, add_new_participants, remove_old_participants, remove_not_included_choices, add_new_choices, \
+    close_poll, get_participants_emails
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -31,7 +32,7 @@ def send_poll_email_to_participants(emails, title, poll_id):
 def send_mention_notification(email, poll_id):
     send_email("Mention Notification", "You are mentioned in a comment:\n"
                "\nYou can view this comment in the following URL:\n"
-               + "http://localhost:3000/comments/" + poll_id, [email])
+               + "http://localhost:3000/comments/" + poll_id, email)
 
 
 def add_new_votes(voter, poll_id, votes):
@@ -47,15 +48,19 @@ def extract_mention(text):
     return results
 
 
+def check_mention(poll_id, text):
+    mentions = extract_mention(text)
+    for person in mentions:
+        person_id = find_id_by_email(person)
+        if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
+            raise Exceptions.UserNotValid
+    send_mention_notification(mentions, poll_id)
+    thread.start_new_thread(send_mention_notification, (mentions, poll_id))
+
+
 def add_new_comment_to_poll(user_id, poll_id, text):
     try:
-        mentions = extract_mention(text)
-        for person in mentions:
-            person_id = find_id_by_email(person)
-            if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
-                raise Exceptions.UserNotValid
-        for person in mentions:
-            send_mention_notification(person, poll_id)
+        check_mention(poll_id, text)
         add_comment(user_id, poll_id, text)
     except Exception as e:
         raise e
@@ -115,3 +120,16 @@ def send_email_of_update(instance, old_participant_emails, new_participant_email
         if new_participant_email not in old_participant_emails:
             emails.append(new_participant_email)
     send_poll_email_to_participants(emails, instance.title, instance.id)
+
+
+def send_poll_close_notification(emails, poll_id):
+    send_email("Poll closed", "A poll you were added to in closed:\n"
+               "\nYou can view this poll in the following URL:\n"
+               + "http://http://localhost:3000/polls/" + poll_id, emails)
+
+
+def close_poll_by_id(poll_id, user_id):
+    close_poll(poll_id, user_id)
+    participants = get_participants_emails(poll_id)
+    thread.start_new_thread(send_poll_close_notification,
+                            (participants, poll_id))

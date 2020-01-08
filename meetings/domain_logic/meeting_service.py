@@ -106,7 +106,7 @@ def send_email_to_participants(start, end, room_name, participants, host, port, 
                + start + " - "
                + end + "\nRoom: "
                + room_name + "\nYou can view this meeting in the following URL:\n"
-               + "http://" + host + ":" + port + "/meetings/" + meeting_id, emails)
+               + "http://" + host + ":" + port + "/meetings/" + str(meeting_id), emails)
 
 
 def send_cancel_notification(participants, meeting_id):

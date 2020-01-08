@@ -20,7 +20,6 @@ class CreatePollTests(TestCase):
         self.choice = PollTime.objects.create(start_date_time=self.start, end_date_time=self.end)
         self.poll.choices.add(self.choice)
 
-
     def testParticipantSerialization(self):
         serializer = ParticipantModelSerializer(self.participant)
         self.assertEqual(serializer.data, {'email': 'p2@p.com'})
@@ -35,7 +34,10 @@ class CreatePollTests(TestCase):
         serializer = PollSerializer(self.poll)
         start = serializers.DateTimeField().to_representation(self.start)
         end = serializers.DateTimeField().to_representation(self.end)
-        self.assertEqual(serializer.data, {'id':1, 'title': 'fake', 'choices': [OrderedDict([('start_date_time', start), ('end_date_time', end)])], 'creator_id': 1, 'participants': ['p2@p.com']})
+        self.assertEqual(serializer.data, {'id':1, 'title': 'fake', 'choices': [OrderedDict([('start_date_time', start),
+                                           ('end_date_time', end)])], 'creator_id': 1, 'participants': ['p2@p.com'],
+                                           'closed': False, 'hasDeadline': False, 'deadline': None
+                                           })
 
     def tearDown(self):
         self.poll.delete()
