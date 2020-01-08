@@ -23,7 +23,7 @@ def increment_reserved():
 
 def increment_created_meetings():
     report = get_report()
-    report.num_reserved_rooms += 1
+    report.num_created_meetings += 1
     report.save()
 
 
