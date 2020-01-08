@@ -12,6 +12,7 @@ class MeetingPoll(models.Model):
     choices = models.ManyToManyField('PollTime', default=None)
     creator = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None, related_name='creator')
     participants = models.ManyToManyField('meetings.Participant', default=None, related_name='participants')
+    closed = models.BooleanField(default=False)
 
 
 class PollChoiceItem(models.Model):

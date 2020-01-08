@@ -1,7 +1,7 @@
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
-    edit_title
+    edit_title, close_poll
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -125,3 +125,7 @@ def edit_poll_participants(instance, value):
         if new_participant_email not in old_participant_emails:
             emails.append(new_participant_email)
     send_poll_email_to_participants(emails, instance.title, instance.id)
+
+
+def close_poll_by_id(poll_id, user_id):
+    close_poll(poll_id, user_id)
