@@ -31,7 +31,7 @@ def send_poll_email_to_participants(emails, title, poll_id):
 def send_mention_notification(email, poll_id):
     send_email("Mention Notification", "You are mentioned in a comment:\n"
                "\nYou can view this comment in the following URL:\n"
-               + "http://localhost:3000/comments/" + poll_id, [email])
+               + "http://localhost:3000/comments/" + poll_id, email)
 
 
 def add_new_votes(voter, poll_id, votes):
@@ -54,8 +54,8 @@ def add_new_comment_to_poll(user_id, poll_id, text):
             person_id = find_id_by_email(person)
             if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
                 raise Exceptions.UserNotValid
-        for person in mentions:
-            send_mention_notification(person, poll_id)
+        send_mention_notification(mentions, poll_id)
+        thread.start_new_thread(send_mention_notification, (mentions, poll_id))
         add_comment(user_id, poll_id, text)
     except Exception as e:
         raise e
