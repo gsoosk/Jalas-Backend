@@ -86,13 +86,16 @@ def get_choices(poll_id, user_id):
 
         pos_voters=[]
         neg_voters=[]
+        ifneeded_voters=[]
         for v in votes:
-            if v.agrees:
+            if v.agrees == 1:
                 pos_voters.append(v.voter.id)
-            else:
+            elif v.agrees == 2:
                 neg_voters.append(v.voter.id)
+            elif v.agrees == 3:
+               ifneeded_voters.append(v.voter.id)
 
-        choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, start, end))
+        choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, ifneeded_voters, start, end))
     participant_ids = [participant.id for participant in participants]
     output = {'id': poll_id, 'title': poll_title, 'deadline': poll.deadline, 'closed': poll.closed, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
 
@@ -179,8 +182,16 @@ def add_new_votes_to_poll(voter, poll_id, votes):
 
         for chosen_time, agree in votes.items():
             if PollTime.objects.get(id=chosen_time):
+                if agree == "agree":
+                    agree_state = 1
+                elif agree == "disagree":
+                    agree_state = 2
+                elif agree == "agree_ifneeded":
+                    agree_state = 3
+
+
                 chosen_poll_time = PollTime.objects.get(id=chosen_time)
-                choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree)
+                choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree_state)
                 choice_item.save()
             else:
                 raise Exceptions.InvalidChosenTime
