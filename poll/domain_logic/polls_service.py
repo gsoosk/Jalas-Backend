@@ -76,9 +76,9 @@ def get_comments(poll_id, user_id):
         return e
 
 
-def remove_comment_from_poll(user_id, comment_id):
+def remove_comment_from_poll(user, comment_id):
     try:
-        remove_poll_comment(user_id, comment_id)
+        remove_poll_comment(user, comment_id)
     except Exception as e:
         return e
 

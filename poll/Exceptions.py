@@ -47,3 +47,6 @@ class PollNotExists(Exception):
 
 class UserNotValid(Exception):
     pass
+
+class NotFoundComment(Exception):
+    pass

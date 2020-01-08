@@ -46,18 +46,25 @@ def add_comment(user_id, poll_id, text):
     poll.comments.add(comment)
 
 
+def get_poll_of_comment(comment):
+    while comment.parent is not None:
+        comment = comment.parent
+    poll = MeetingPoll.objects.get(comments=comment)
+    return poll
+
+
 def add_reply(user_id, comment_id, text):
     if not Comment.objects.filter(id=comment_id).exists():
         print('invalid comment')
         raise Exceptions.InvalidComment
     comment = Comment.objects.filter(id=comment_id)[0]
 
-    if not has_access_to_poll(user_id, comment.poll):
+    if not has_access_to_poll(user_id, get_poll_of_comment(comment)):
         print('invalid poll')
         raise Exceptions.InvalidPoll
-    user = Participant.objects.filter(id=user_id)[0]
+    user = Participant.objects.get(id=user_id)
     curr_time = datetime.datetime.now()
-    reply = Comment(user=user, text=text, datetime=curr_time, parent=comment)
+    reply = Comment(user=user, text=text, date_time=curr_time, parent=comment)
     reply.save()
 
 
@@ -187,11 +194,11 @@ def add_new_votes_to_poll(voter, poll_id, votes):
         raise Exceptions.NotParticipant
 
 
-def remove_poll_comment(user_id, comment_id):
+def remove_poll_comment(user, comment_id):
     if Comment.objects.get(id=comment_id):
         comment = Comment.objects.get(id=comment_id)
-        if not comment.user.id == user_id:
-            raise Exception.AccessDenied
+        if not can_user_delete_comment(comment, user):
+            raise Exception
         else:
             comment.delete()
     else:
@@ -284,3 +291,15 @@ def can_user_delete_comment(comment, user):
     except:
         return False
     return False
+
+
+def can_edit_comment(comment, user):
+    if comment.user == user:
+        return True
+    return False
+
+
+def update_comment(comment, new_text):
+    comment.text = new_text
+    comment.date_time = datetime.datetime.now()
+    comment.save()
