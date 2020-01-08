@@ -1,7 +1,7 @@
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
-    edit_title, close_poll
+    edit_title, close_poll, get_participants_emails
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -127,5 +127,14 @@ def edit_poll_participants(instance, value):
     send_poll_email_to_participants(emails, instance.title, instance.id)
 
 
+def send_poll_close_notification(emails, poll_id):
+    send_email("Poll closed", "A poll you were added to in closed:\n"
+               "\nYou can view this poll in the following URL:\n"
+               + "http://http://localhost:3000/polls/" + poll_id, emails)
+
+
 def close_poll_by_id(poll_id, user_id):
     close_poll(poll_id, user_id)
+    participants = get_participants_emails(poll_id)
+    thread.start_new_thread(send_poll_close_notification,
+                            (participants, poll_id))

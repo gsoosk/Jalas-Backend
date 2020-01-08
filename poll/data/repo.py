@@ -29,7 +29,7 @@ def get_polls(user_id):
     for poll in polls:
         if has_access_to_poll(user_id, poll):
             user_polls.append(poll)
-    output = {'user_id': user_id, 'polls': [{'title': p.title, 'poll_id': p.id, 'creator_id': p.creator.id} for p in user_polls]}
+    output = {'user_id': user_id, 'polls': [{'title': p.title, 'poll_id': p.id, 'creator_id': p.creator.id, 'closed': p.closed} for p in user_polls]}
     return output
 
 
@@ -227,3 +227,14 @@ def close_poll(poll_id, user_id):
 
     poll.closed = True
     poll.save()
+
+
+def get_participants_emails(poll_id):
+    if not MeetingPoll.objects.filter(id=poll_id).exists():
+        raise Exceptions.InvalidPoll
+    poll = MeetingPoll.objects.filter(id=poll_id)[0]
+    participants = poll.participants
+    emails = []
+    for participant in participants.iterator():
+        emails.append(participant.email)
+    return emails

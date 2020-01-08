@@ -20,7 +20,6 @@ class CreatePollTests(TestCase):
         self.choice = PollTime.objects.create(start_date_time=self.start, end_date_time=self.end)
         self.poll.choices.add(self.choice)
 
-
     def testParticipantSerialization(self):
         serializer = ParticipantModelSerializer(self.participant)
         self.assertEqual(serializer.data, {'email': 'p2@p.com'})
