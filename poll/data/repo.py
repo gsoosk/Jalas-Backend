@@ -29,7 +29,7 @@ def get_polls(user_id):
     for poll in polls:
         if has_access_to_poll(user_id, poll):
             user_polls.append(poll)
-    output = {'user_id': user_id, 'polls': [{'title': p.title, 'poll_id': p.id, 'creator_id': p.creator.id, 'closed': p.closed} for p in user_polls]}
+    output = {'user_id': user_id, 'polls': [{'title': p.title, 'poll_id': p.id, 'deadline': p.deadline, 'creator_id': p.creator.id, 'closed': p.closed} for p in user_polls]}
     return output
 
 
@@ -71,7 +71,7 @@ def get_choices(poll_id, user_id):
     if not MeetingPoll.objects.filter(id=poll_id).exists():
         raise Exceptions.PollNotExists
     poll = MeetingPoll.objects.get(id=poll_id)
-    if not (check_if_person_is_participant_of_poll_by_id(poll, user_id) or poll.creator_id == user_id):
+    if not (check_if_person_is_participant_of_poll_by_id(poll_id, user_id) or poll.creator_id == user_id):
         raise Exceptions.AccessDenied
 
     poll_title = poll.title
@@ -94,13 +94,13 @@ def get_choices(poll_id, user_id):
 
         choices.append(PollChoiceItemRep(t.id, pos_voters, neg_voters, start, end))
     participant_ids = [participant.id for participant in participants]
-    output = {'id': poll_id, 'title': poll_title, 'closed': poll.closed, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
+    output = {'id': poll_id, 'title': poll_title, 'deadline': poll.deadline, 'closed': poll.closed, 'choices': [c.toJson() for c in choices], 'participants': participant_ids}
 
     return output
 
 
-def get_new_poll(choices_data, creator, participants, title):
-    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False)
+def get_new_poll(choices_data, creator, participants, title, deadline):
+    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False, deadline=deadline)
 
     for choice_data in choices_data:
         new_poll = PollTime.objects.create(**choice_data)
