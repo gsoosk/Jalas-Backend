@@ -138,7 +138,6 @@ def get_norifications_info(request):
         user_id = request.user.id
         notifications = get_notifications_by_user(user_id)
         serializer = NotificationSerializer(notifications)
-        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exceptions.InvalidParticipantInfo:
         return  Response({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)

@@ -89,6 +89,7 @@ def update_notifications_fields(notifications, request):
     notifications.meeting_set_creator_notification = request.data['meeting_set_creator_notification']
     notifications.meeting_invitation = request.data['meeting_invitation']
     notifications.cancel_meeting_notification = request.data['cancel_meeting_notification']
+    notifications.save()
 
 def get_emails(participants):
     emails = []
