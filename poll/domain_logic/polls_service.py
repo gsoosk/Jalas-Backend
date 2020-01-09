@@ -1,3 +1,4 @@
+from meetings.domain_logic.meeting_service import create_new_meeting, get_available_rooms_service
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
@@ -7,6 +8,12 @@ from meetings.domain_logic.email_service import send_email
 import _thread as thread
 from meetings.models import Notifications, Participant
 import re
+from django.utils import timezone
+from meetings.data.Meeting import Meeting
+import math
+import meetings.Exceptions as MeetingExceptions
+
+from poll.models import PollChoiceItem
 
 
 def get_all_polls_by_user_id(user_id):
@@ -148,3 +155,58 @@ def close_poll_by_id(poll_id, user_id):
     participants = get_participants_emails(poll_id)
     thread.start_new_thread(send_poll_close_notification,
                             (participants, poll_id))
+
+
+def select_random_choice(poll):
+    no_rooms_choices = []
+    while True:
+        max_choice = select_best_choice(no_rooms_choices, poll)
+        start_date_time, end_date_time = max_choice.start_date_time.strftime('%Y-%m-%dT%H:%M:%SZ'),\
+                                         max_choice.end_date_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+        try:
+            rooms = get_available_rooms_service(start_date_time, end_date_time)
+        except MeetingExceptions.RoomTimeInvalid as e:
+            no_rooms_choices.append(max_choice)
+            continue
+        except:
+            continue
+
+        if len(rooms) == 0:
+            no_rooms_choices.append(max_choice)
+            continue
+        room = list(rooms.values())[0]
+        return room, start_date_time, end_date_time
+
+
+def select_best_choice(no_rooms_choices, poll):
+    max_agrees = -math.inf
+    max_agree_if_needed = -math.inf
+    max_choice = None
+    for choice in poll.choices.iterator():
+        num_of_agrees = len(PollChoiceItem.objects.filter(chosen_time=choice, agrees=1))
+        num_of_agree_if_needed = len(PollChoiceItem.objects.filter(chosen_time=choice, agrees=3))
+        if (num_of_agrees > max_agrees or (
+                num_of_agrees == max_agrees and num_of_agree_if_needed > max_agree_if_needed)) \
+                and choice not in no_rooms_choices:
+            max_agrees = num_of_agrees
+            max_agree_if_needed = num_of_agree_if_needed
+            max_choice = choice
+    if not max_choice:
+        raise Exceptions.NoChoiceCanNotSelectToClose
+    return max_choice
+
+
+def close_poll_if_needed(poll):
+    curr_date_time = timezone.now()
+    if curr_date_time > poll.deadline:
+        close_poll_by_id(poll.id, poll.creator.id)
+        try:
+            room, start_date_time, end_date_time = select_random_choice(poll)
+            participants = []
+            for participant in poll.participants.iterator():
+                participants.append(participant.id)
+            meeting = Meeting(poll.title, start_date_time, end_date_time, room, participants, poll.creator.id)
+            create_new_meeting(meeting, 'localhost', str(3000))
+        except Exception as e:
+            print(e)
+            pass

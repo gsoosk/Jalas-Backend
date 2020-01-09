@@ -59,3 +59,7 @@ class CanChangePoll(Exception):
 
 class PollClosed(Exception):
     pass
+
+
+class NoChoiceCanNotSelectToClose(Exception):
+    pass
