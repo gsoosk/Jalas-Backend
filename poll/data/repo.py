@@ -347,3 +347,7 @@ def update_comment(comment, new_text):
     comment.text = new_text
     comment.date_time = datetime.datetime.now()
     comment.save()
+
+
+def get_polls_to_schedule():
+    return MeetingPoll.objects.filter(closed=False, hasDeadline=True)
