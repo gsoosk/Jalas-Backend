@@ -1,4 +1,4 @@
-from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment, Reply
+from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
 from meetings.models import Participant
@@ -41,8 +41,16 @@ def add_comment(user_id, poll_id, text):
         raise Exceptions.InvalidPoll
     user = Participant.objects.filter(id=user_id)[0]
     curr_time = datetime.datetime.now()
-    comment = Comment(user=user, poll=poll, text=text, date_time=curr_time)
+    comment = Comment(user=user, text=text, date_time=curr_time)
     comment.save()
+    poll.comments.add(comment)
+
+
+def get_poll_of_comment(comment):
+    while comment.parent is not None:
+        comment = comment.parent
+    poll = MeetingPoll.objects.get(comments=comment)
+    return poll
 
 
 def add_reply(user_id, comment_id, text):
@@ -51,12 +59,12 @@ def add_reply(user_id, comment_id, text):
         raise Exceptions.InvalidComment
     comment = Comment.objects.filter(id=comment_id)[0]
 
-    if not has_access_to_poll(user_id, comment.poll):
+    if not has_access_to_poll(user_id, get_poll_of_comment(comment)):
         print('invalid poll')
         raise Exceptions.InvalidPoll
-    user = Participant.objects.filter(id=user_id)[0]
+    user = Participant.objects.get(id=user_id)
     curr_time = datetime.datetime.now()
-    reply = Reply(user=user, comment=comment, text=text, date_time=curr_time)
+    reply = Comment(user=user, text=text, date_time=curr_time, parent=comment)
     reply.save()
 
 
@@ -102,8 +110,9 @@ def get_choices(poll_id, user_id):
     return output
 
 
-def get_new_poll(choices_data, creator, participants, title, deadline):
-    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False, deadline=deadline)
+def get_new_poll(choices_data, creator, participants, title, deadline, hasDeadline):
+    poll = MeetingPoll.objects.create(creator=creator, title=title, closed=False, deadline=deadline,
+                                      hasDeadline=hasDeadline)
 
     for choice_data in choices_data:
         new_poll = PollTime.objects.create(**choice_data)
@@ -113,6 +122,8 @@ def get_new_poll(choices_data, creator, participants, title, deadline):
     for new_participant in participants:
         emails.append(new_participant.email)
         poll.participants.add(new_participant)
+
+    poll.participants.add(creator)
 
     return poll, emails
 
@@ -158,7 +169,7 @@ def get_comments_of_poll(poll_id, user_id):
     poll = MeetingPoll.objects.filter(id=poll_id)[0]
     if not has_access_to_poll(user_id, poll):
         raise Exceptions.InvalidPoll
-    return Comment.objects.filter(poll=poll)
+    return poll.comments.all()
 
 
 def get_replies_of_comment(comment_id, user_id):
@@ -201,11 +212,11 @@ def add_new_votes_to_poll(voter, poll_id, votes):
         raise Exceptions.NotParticipant
 
 
-def remove_poll_comment(user_id, comment_id):
+def remove_poll_comment(user, comment_id):
     if Comment.objects.get(id=comment_id):
         comment = Comment.objects.get(id=comment_id)
-        if not comment.user.id == user_id:
-            raise Exception.AccessDenied
+        if not can_user_delete_comment(comment, user):
+            raise Exception
         else:
             comment.delete()
     else:
@@ -253,3 +264,86 @@ def get_participants_emails(poll_id):
     for participant in participants.iterator():
         emails.append(participant.email)
     return emails
+
+
+def remove_old_participants(instance):
+    old_participant_emails = []
+    for participant in instance.participants.iterator():
+        old_participant_emails.append(participant.email)
+        instance.participants.remove(participant)
+    instance.save()
+    return old_participant_emails
+
+
+def add_new_participants(instance, participants_value, user):
+    new_participant_emails = []
+    for new_participant in participants_value:
+        new_participant_emails.append(new_participant.email)
+        instance.participants.add(new_participant)
+    instance.participants.add(user)
+    if user.email not in new_participant_emails :
+        new_participant_emails.append(user.email)
+        instance.save()
+    return new_participant_emails
+
+
+def is_choice_in_values(choice, choices_value):
+    for choice_value in choices_value:
+        if choice_value['start_date_time'] == choice.start_date_time and \
+                choice_value['end_date_time'] == choice.end_date_time:
+            return True
+    return False
+
+
+def remove_not_included_choices(instance, choices_value):
+    for choice in instance.choices.iterator():
+        if not is_choice_in_values(choice, choices_value):
+            instance.remove(choice)
+            choice.delete()
+    instance.save()
+
+
+def is_choice_value_in_choices(choice_value, choices):
+    for choice in choices.iterator():
+        if choice_value['start_date_time'] == choice.start_date_time and \
+                choice_value['end_date_time'] == choice.end_date_time:
+            return True
+    return False
+
+
+def add_new_choices(instance, choices_value):
+    for choice_value in choices_value:
+        if not is_choice_value_in_choices(choice_value, instance.choices):
+            new_choice = create_choice_time(choice_value)
+            instance.choices.add(new_choice)
+    instance.save()
+
+
+def get_comment(comment_id):
+    return Comment.objects.get(id=comment_id)
+
+
+def can_user_delete_comment(comment, user):
+    if user == comment.user:
+        return True
+    while comment.parent is not None:
+        comment = comment.parent
+    try:
+        poll = MeetingPoll.objects.get(comments=comment)
+        if poll.creator == user:
+            return True
+    except:
+        return False
+    return False
+
+
+def can_edit_comment(comment, user):
+    if comment.user == user:
+        return True
+    return False
+
+
+def update_comment(comment, new_text):
+    comment.text = new_text
+    comment.date_time = datetime.datetime.now()
+    comment.save()

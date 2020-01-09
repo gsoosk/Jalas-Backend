@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from poll.models import MeetingPoll, Comment, Reply
+from poll.models import MeetingPoll, Comment
 from meetings.models import Participant
 from poll.models import PollTime
 from poll.data.repo import get_new_poll
@@ -43,21 +43,13 @@ class ParticipantModelSerializer(serializers.ModelSerializer):
         fields = ['email']
 
 
-class ReplyCommentSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(read_only=True, source="user.email")
-
-    class Meta:
-        model = Reply
-        fields = ['email', 'text', 'date_time']
-
-
 class CommentSerializer(serializers.ModelSerializer):
     email = serializers.CharField(read_only=True, source="user.email")
-    replies = ReplyCommentSerializer(many=True)
+    replies = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['id', 'email', 'poll', 'text', 'date_time', 'replies']
+        fields = ['id', 'email', 'text', 'date_time', 'replies']
 
 
 class PollSerializer(serializers.ModelSerializer):
@@ -68,20 +60,21 @@ class PollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingPoll
-        fields = ['id','title', 'choices', 'creator_id', 'participants', 'closed', 'deadline']
+        fields = ['id', 'title', 'choices', 'creator_id', 'participants', 'closed', 'deadline', 'hasDeadline']
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices')
         creator = self.context['request'].user
         participants = validated_data.pop('participants')
         deadline = validated_data.pop('deadline')
+        hasDeadline = validated_data.pop('hasDeadline')
         try:
-            poll, emails = get_new_poll(choices_data, creator, participants, validated_data.pop('title'), deadline)
+            poll, emails = get_new_poll(choices_data, creator, participants, validated_data.pop('title'), deadline, hasDeadline)
         except Exceptions.ParticipantsAreNotExsits:
             raise serializers.ValidationError('Some of Participants Are Not Exists')
         send_poll_email_to_participants(emails, poll.title, poll.id)
         return poll
 
     def update(self, instance, validated_data):
-        return update_poll(validated_data, instance)
+        return update_poll(validated_data, instance, self.context['request'].user)
 

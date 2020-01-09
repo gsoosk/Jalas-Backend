@@ -105,12 +105,12 @@ def add_comment(request):
         add_new_comment_to_poll(user_id, poll_id, text)
         return Response({}, status=status.HTTP_200_OK)
     except Exceptions.UserNotValid:
-        return Response({"message": "The user you mentioned does not exist or does not have access to this poll"},
+        return Response({"message": "The user you mentioned does not exist or does not have access to this poll."},
                         status=status.HTTP_404_NOT_FOUND)
     except Exceptions.InvalidPoll:
-        return Response({"message": "You do not have access to this poll"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "You do not have access to this poll."}, status=status.HTTP_404_NOT_FOUND)
     except Exception:
-        return Response({"message": "Provided information is not enough"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Provided information is not enough."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -125,7 +125,10 @@ def add_reply_comment(request):
         return Response({}, status=status.HTTP_200_OK)
     except Exceptions.InvalidPoll as e:
         return Response({"message": "You do not have access to this poll"}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
+    except Exceptions.UserNotValid:
+        return Response({"message": "The user you mentioned does not exist or does not have access to this poll."},
+                        status=status.HTTP_404_NOT_FOUND)
+    except Exception:
         return Response({"message": "Provided information is not enough"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -141,8 +144,10 @@ def get_comments_of_poll(request, poll_id=-1):
         all_comments = []
         for comment in comments:
             serializer = CommentSerializer(comment)
-            # add_replies
-            all_comments.append(serializer.data)
+            comment_data = {'can_delete': repo.can_user_delete_comment(comment, request.user),
+                            'can_edit': repo.can_edit_comment(comment, request.user)}
+            comment_data.update(serializer.data)
+            all_comments.append(comment_data)
         return Response(all_comments, status=status.HTTP_200_OK)
     except Exceptions.InvalidPoll as e:
         return Response({"message": "You do not have access to this poll"}, status=status.HTTP_404_NOT_FOUND)
@@ -151,14 +156,25 @@ def get_comments_of_poll(request, poll_id=-1):
         return Response({"message": "Provided information is not enough"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_comment(request, id):
+    comment = repo.get_comment(id)
+    comment_data = {'can_delete': repo.can_user_delete_comment(comment, request.user),
+                    'can_edit': repo.can_edit_comment(comment, request.user)}
+    comment_data.update(CommentSerializer(comment).data)
+    return Response(comment_data, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def remove_comment(request):
-    user_id = request.user.id
+
     comment_id = request.data['comment_id']
     try:
-        remove_comment_from_poll(user_id, comment_id)
+        remove_comment_from_poll(request.user, comment_id)
         return Response({}, status=status.HTTP_200_OK)
     except Exceptions.InvalidComment as e:
         return Response({"message": "You do not have access to this comment"}, status=status.HTTP_404_NOT_FOUND)
@@ -186,3 +202,17 @@ def close_poll(request):
     except Exception as e:
         return Response({"message": "An error has occurred"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_comment(request, comment_id):
+    try:
+        comment = repo.get_comment(comment_id)
+    except:
+        return Response({"message": "can not find comment"}, status=status.HTTP_404_NOT_FOUND)
+    if not repo.can_edit_comment(comment, request.user):
+        return Response({"message": "can not edit this comment"}, status=status.HTTP_403_FORBIDDEN)
+    new_text = request.data['text']
+    repo.update_comment(comment, new_text)
+    return Response({}, status=status.HTTP_200_OK)

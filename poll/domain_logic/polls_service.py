@@ -1,7 +1,8 @@
 from poll import Exceptions
 from poll.data.repo import get_polls, get_choices, add_new_votes_to_poll, add_comment, get_comments_of_poll, add_reply \
     , remove_poll_comment, check_if_person_is_participant_of_poll_by_id, find_id_by_email, create_choice_time, \
-    edit_title, close_poll, get_participants_emails
+    edit_title, add_new_participants, remove_old_participants, remove_not_included_choices, add_new_choices, \
+    close_poll, get_participants_emails, get_poll_of_comment, get_comment
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import re
@@ -31,7 +32,7 @@ def send_poll_email_to_participants(emails, title, poll_id):
 def send_mention_notification(email, poll_id):
     send_email("Mention Notification", "You are mentioned in a comment:\n"
                "\nYou can view this comment in the following URL:\n"
-               + "http://localhost:3000/comments/" + poll_id, email)
+               + "http://localhost:3000/comments/" + str(poll_id), email)
 
 
 def add_new_votes(voter, poll_id, votes):
@@ -53,7 +54,6 @@ def check_mention(poll_id, text):
         person_id = find_id_by_email(person)
         if not check_if_person_is_participant_of_poll_by_id(poll_id, person_id):
             raise Exceptions.UserNotValid
-    send_mention_notification(mentions, poll_id)
     thread.start_new_thread(send_mention_notification, (mentions, poll_id))
 
 
@@ -66,10 +66,9 @@ def add_new_comment_to_poll(user_id, poll_id, text):
 
 
 def add_new_reply_to_comment(user_id, comment_id, text):
-    try:
-        add_reply(user_id, comment_id, text)
-    except Exception as e:
-        raise e
+    poll = get_poll_of_comment(get_comment(comment_id))
+    check_mention(poll.id, text)
+    add_reply(user_id, comment_id, text)
 
 
 def get_comments(poll_id, user_id):
@@ -80,21 +79,21 @@ def get_comments(poll_id, user_id):
         return e
 
 
-def remove_comment_from_poll(user_id, comment_id):
+def remove_comment_from_poll(user, comment_id):
     try:
-        remove_poll_comment(user_id, comment_id)
+        remove_poll_comment(user, comment_id)
     except Exception as e:
         return e
 
 
-def update_poll(validated_data, instance):
+def update_poll(validated_data, instance, user):
     for attr, value in validated_data.items():
         if attr == 'title':
             edit_poll_title(instance, attr, value)
         elif attr == 'choices':
             edit_poll_choices(instance, value)
         elif attr == 'participants':
-            edit_poll_participants(instance, value)
+            edit_poll_participants(instance, value, user)
     return instance
 
 
@@ -103,27 +102,17 @@ def edit_poll_title(instance, attr, value):
 
 
 def edit_poll_choices(instance, value):
-    for choice in instance.choices.iterator():
-        instance.choices.remove(choice)
-        choice.delete()
-
-    for choice_data in value:
-        new_poll = create_choice_time(choice_data)
-        instance.choices.add(new_poll)
-
-    instance.save()
+    remove_not_included_choices(instance, value)
+    add_new_choices(instance, value)
 
 
-def edit_poll_participants(instance, value):
-    old_participant_emails, new_participant_emails = [], []
-    for participant in instance.participants.iterator():
-        old_participant_emails.append(participant.email)
-        instance.participants.remove(participant)
-    for new_participant in value:
-        new_participant_emails.append(new_participant.email)
-        instance.participants.add(new_participant)
+def edit_poll_participants(instance, participants_value, user):
+    old_participant_emails = remove_old_participants(instance)
+    new_participant_emails = add_new_participants(instance, participants_value, user)
+    send_email_of_update(instance, old_participant_emails, new_participant_emails)
 
-    instance.save()
+
+def send_email_of_update(instance, old_participant_emails, new_participant_emails):
     emails = []
     for new_participant_email in new_participant_emails:
         if new_participant_email not in old_participant_emails:

@@ -13,7 +13,6 @@ urlpatterns = [
     path('cancel', views.cancel_reservation),
     # path('login', views.login),
     path('auth/', views.CustomAuthToken.as_view()),
-
     path('<int:meeting_id>', views.get_meeting_details, name='meeting_details'),
     # path('<int:pk>', views.MeetingInfoSerializer.as_view({'get': 'retrieve'}), name='meeting_details'),
 ]
