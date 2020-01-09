@@ -97,7 +97,7 @@ def send_email_to_creator(start, end, room_name, creator_email):
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
                + start + " - "
                + end + "\nRoom: "
-               + room_name + "\n", [creator_email])
+               + room_name + "\n", creator_email)
 
 
 def send_email_to_participants(start, end, room_name, participants, host, port, meeting_id):
@@ -118,7 +118,10 @@ def send_cancel_notification(participants, meeting_id):
 
 def send_email_thread(start, end, room_name, participants, host, port, meeting_id, creator_id):
     creator_email = get_participants_emails([creator_id])
-    send_email_to_creator(start, end, room_name, creator_email)
+
+    # Creator is in participants
+    # send_email_to_creator(start, end, room_name, creator_email)
+
     send_email_to_participants(start, end, room_name, participants, host, port, meeting_id)
 
 
