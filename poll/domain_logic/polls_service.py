@@ -37,9 +37,10 @@ def send_mention_notification(email, poll_id):
 
 def add_new_votes(voter, poll_id, votes):
     try:
-        add_new_votes_to_poll(voter, poll_id, votes)
+        return add_new_votes_to_poll(voter, poll_id, votes)
     except Exception as e:
         raise e
+
 
 
 def extract_mention(text):

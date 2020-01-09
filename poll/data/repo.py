@@ -156,6 +156,9 @@ def check_if_person_has_voted_before(poll_id, participant_id):
         return True
     return False
 
+def delete_prev_user_votes(poll_id, participant_id):
+    PollChoiceItem.objects.filter(voter=participant_id, poll=poll_id).delete()
+
 
 def send_email_to_poll_creator(voter, poll):
     thread.start_new_thread(send_email, (f'New vote for {poll.title}',
@@ -180,6 +183,7 @@ def get_replies_of_comment(comment_id, user_id):
 
 
 def add_new_votes_to_poll(voter, poll_id, votes):
+    updated = False
     if MeetingPoll.objects.get(id=poll_id):
         poll = MeetingPoll.objects.get(id=poll_id)
     else:
@@ -189,7 +193,8 @@ def add_new_votes_to_poll(voter, poll_id, votes):
     if poll.participants.filter(id=voter):
         voter_participant = poll.participants.filter(id=voter)[0]
         if check_if_person_has_voted_before(poll_id, voter_participant.id):
-            raise Exceptions.VotedBefore
+            updated = True
+            delete_prev_user_votes(poll_id, voter_participant.id)
 
         for chosen_time, agree in votes.items():
             if PollTime.objects.get(id=chosen_time):
@@ -200,7 +205,6 @@ def add_new_votes_to_poll(voter, poll_id, votes):
                 elif agree == "agree_ifneeded":
                     agree_state = 3
 
-
                 chosen_poll_time = PollTime.objects.get(id=chosen_time)
                 choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree_state)
                 choice_item.save()
@@ -210,7 +214,7 @@ def add_new_votes_to_poll(voter, poll_id, votes):
     else:
         print("participant not found")
         raise Exceptions.NotParticipant
-
+    return updated
 
 def remove_poll_comment(user, comment_id):
     if Comment.objects.get(id=comment_id):
