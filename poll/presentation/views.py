@@ -75,7 +75,13 @@ def vote_for_poll(request):
     votes = request.data['votes']
 
     try:
-        add_new_votes(voter, poll_id, votes)
+        updated = add_new_votes(voter, poll_id, votes)
+        if updated:
+            return Response({"message": Exceptions.UPDATE_VOTED_MSG}, status.HTTP_200_OK)
+        else:
+            return Response({}, status.HTTP_200_OK)
+
+
     except Exceptions.NotParticipant:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.PARTICIPANT_ERROR})
     except Exceptions.InvalidEmail:
@@ -84,14 +90,12 @@ def vote_for_poll(request):
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.POLL_ERROR})
     except Exceptions.InvalidChosenTime:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.TIME_ERROR})
-    except Exceptions.VotedBefore:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.VOTED_BEFORE_ERROR})
     except Exceptions.PollClosed:
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data={"message": "This poll is closed"})
     except Exception:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Exception"})
 
-    return Response({}, status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
