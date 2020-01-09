@@ -1,4 +1,4 @@
-from meetings.models import Meeting, Room, Participant
+from meetings.models import Meeting, Room, Participant, Notifications
 from rest_framework import serializers
 
 
@@ -25,6 +25,14 @@ class ParticipantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Participant
         fields = ['email']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = ['poll_creator_vote_notifications', 'poll_contribution_invitation', 'mention_notification',
+                  'poll_close_notification', 'meeting_set_creator_notification', 'meeting_invitation',
+                  'cancel_meeting_notification']
 
 
 class MeetingInfoSerializer(serializers.ModelSerializer):

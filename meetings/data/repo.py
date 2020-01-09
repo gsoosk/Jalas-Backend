@@ -1,6 +1,7 @@
 from meetings.models import Meeting
 from meetings.models import Room
 from meetings.models import Participant
+from meetings.models import Notifications
 from meetings import Exceptions
 
 
@@ -70,6 +71,14 @@ def get_meeting_info(meeting_id, user_id):
         return meeting
     else:
         raise Exceptions.UnauthorizedUser
+
+
+def get_owner_notifications(user_id):
+    if not Participant.objects.filter(id=user_id):
+        raise Exceptions.InvalidParticipantInfo
+    user = Participant.objects.filter(id=user_id)[0]
+    notifications = Notifications.objects.filter(owner=user)[0]
+    return notifications
 
 
 def get_emails(participants):

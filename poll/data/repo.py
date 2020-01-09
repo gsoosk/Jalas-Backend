@@ -160,8 +160,13 @@ def delete_prev_user_votes(poll_id, participant_id):
     PollChoiceItem.objects.filter(voter=participant_id, poll=poll_id).delete()
 
 
-def send_email_to_poll_creator(voter, poll):
-    thread.start_new_thread(send_email, (f'New vote for {poll.title}',
+def send_email_to_poll_creator(voter, poll, updated):
+    if updated:
+        thread.start_new_thread(send_email, (f'Update vote for {poll.title}',
+                                             f'The vote for {poll.title} from {voter} has been updated',
+                                             [poll.creator.email]))
+    else:
+        thread.start_new_thread(send_email, (f'New vote for {poll.title}',
                                          f'There is a vote for {poll.title} from {voter}',
                                          [poll.creator.email]))
 
@@ -210,7 +215,7 @@ def add_new_votes_to_poll(voter, poll_id, votes):
                 choice_item.save()
             else:
                 raise Exceptions.InvalidChosenTime
-        send_email_to_poll_creator(voter, poll)
+        send_email_to_poll_creator(voter, poll, updated)
     else:
         print("participant not found")
         raise Exceptions.NotParticipant

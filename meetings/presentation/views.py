@@ -3,10 +3,10 @@ from django.contrib.auth import authenticate
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
-    get_meeting_details_by_id, get_all_meetings_by_user_id
+    get_meeting_details_by_id, get_all_meetings_by_user_id, get_notifications_by_user
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer
+from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer, NotificationSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
@@ -130,3 +130,31 @@ class CustomAuthToken(ObtainAuthToken):
             'is_admin': user.is_staff,
         })
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_norifications_info(request):
+    try:
+        user_id = request.user.id
+        notifications = get_notifications_by_user(user_id)
+        serializer = NotificationSerializer(notifications)
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exceptions.InvalidParticipantInfo:
+        return  Response({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)
+
+# @api_view(['POST'])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# def update_norifications_info(request):
+#     try:
+#         user_id = request.user.id
+#         notifications = get_notifications_by_user(user_id)
+#         serializer = NotificationSerializer(notifications)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     except Exceptions.InvalidParticipantInfo:
+#         return  Response({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)
+#     except Exception as e:
+#         return Response(e, status=status.HTTP_404_NOT_FOUND)

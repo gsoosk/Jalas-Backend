@@ -8,7 +8,8 @@ import _thread as thread
 from report.domain_logic.Reports import ReportsData
 from report.data import repo
 from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
-    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id, get_emails
+    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id,\
+    get_emails, get_owner_notifications
 import _thread as thread
 
 def is_time_valid(start, end):
@@ -162,6 +163,8 @@ def create_new_meeting(new_meeting, host, port):
 def get_meeting_details_by_id(meeting_id, user_id):
     return get_meeting_info(meeting_id, user_id)
 
+def get_notifications_by_user(user_id):
+    return get_owner_notifications(user_id)
 
 def get_all_meetings_by_user_id(user_id):
     return get_meetings_by_id(user_id)
