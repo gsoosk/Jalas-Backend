@@ -161,7 +161,7 @@ def delete_prev_user_votes(poll_id, participant_id):
 
 
 def send_email_to_poll_creator(voter, poll, updated):
-    notif = Notifications.objects.filter(owner=poll.creator.email)[0]
+    notif = Notifications.objects.filter(owner=poll.creator)[0]
     if not notif.poll_creator_vote_notifications:
         return
     if updated:
@@ -203,7 +203,6 @@ def add_new_votes_to_poll(voter, poll_id, votes):
         if check_if_person_has_voted_before(poll_id, voter_participant.id):
             updated = True
             delete_prev_user_votes(poll_id, voter_participant.id)
-
         for chosen_time, agree in votes.items():
             if PollTime.objects.get(id=chosen_time):
                 if agree == "agree":
@@ -212,7 +211,6 @@ def add_new_votes_to_poll(voter, poll_id, votes):
                     agree_state = 2
                 elif agree == "agree_ifneeded":
                     agree_state = 3
-
                 chosen_poll_time = PollTime.objects.get(id=chosen_time)
                 choice_item = PollChoiceItem(voter=voter_participant, poll=poll, chosen_time=chosen_poll_time, agrees=agree_state)
                 choice_item.save()
