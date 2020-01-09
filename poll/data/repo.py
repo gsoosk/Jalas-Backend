@@ -1,7 +1,7 @@
 from poll.models import MeetingPoll, PollChoiceItem, PollTime, Comment
 from poll.data.PollChoiceItem import PollChoiceItemRep
 import poll.Exceptions as Exceptions
-from meetings.models import Participant
+from meetings.models import Participant, Notifications
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 import datetime
@@ -161,6 +161,9 @@ def delete_prev_user_votes(poll_id, participant_id):
 
 
 def send_email_to_poll_creator(voter, poll, updated):
+    notif = Notifications.objects.filter(owner=poll.creator.email)[0]
+    if not notif.poll_creator_vote_notifications:
+        return
     if updated:
         thread.start_new_thread(send_email, (f'Update vote for {poll.title}',
                                              f'The vote for {poll.title} from {voter} has been updated',
