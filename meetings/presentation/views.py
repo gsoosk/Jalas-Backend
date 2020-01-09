@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from meetings.data.Meeting import Meeting
 from meetings.data.Room import Room
 from meetings.domain_logic.meeting_service import create_new_meeting, cancel_room_reservation, \
-    get_meeting_details_by_id, get_all_meetings_by_user_id, get_notifications_by_user
+    get_meeting_details_by_id, get_all_meetings_by_user_id, get_notifications_by_user, update_notifications
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer, NotificationSerializer
@@ -145,16 +145,16 @@ def get_norifications_info(request):
     except Exception as e:
         return Response(e, status=status.HTTP_404_NOT_FOUND)
 
-# @api_view(['POST'])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
-# def update_norifications_info(request):
-#     try:
-#         user_id = request.user.id
-#         notifications = get_notifications_by_user(user_id)
-#         serializer = NotificationSerializer(notifications)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#     except Exceptions.InvalidParticipantInfo:
-#         return  Response({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)
-#     except Exception as e:
-#         return Response(e, status=status.HTTP_404_NOT_FOUND)
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_norifications_info(request):
+    try:
+        user_id = request.user.id
+        notifications = get_notifications_by_user(user_id)
+        update_notifications(notifications, request)
+        return Response(status=status.HTTP_200_OK)
+    except Exceptions.InvalidParticipantInfo:
+        return  Response({"message": "This user does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(e, status=status.HTTP_404_NOT_FOUND)

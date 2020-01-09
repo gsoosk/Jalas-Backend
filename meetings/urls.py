@@ -14,7 +14,7 @@ urlpatterns = [
     # path('login', views.login),
     path('auth/', views.CustomAuthToken.as_view()),
     path('notificationsInfo', views.get_norifications_info),
-    # path('update_notificationsInfo', views.update_norifications_info),
+    path('update_notificationsInfo', views.update_norifications_info),
     path('<int:meeting_id>', views.get_meeting_details, name='meeting_details'),
     # path('<int:pk>', views.MeetingInfoSerializer.as_view({'get': 'retrieve'}), name='meeting_details'),
 ]

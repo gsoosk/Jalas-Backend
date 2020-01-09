@@ -81,6 +81,15 @@ def get_owner_notifications(user_id):
     return notifications
 
 
+def update_notifications_fields(notifications, request):
+    notifications.poll_creator_vote_notifications = request.data['poll_creator_vote_notifications']
+    notifications.poll_contribution_invitation = request.data['poll_contribution_invitation']
+    notifications.mention_notification = request.data['mention_notification']
+    notifications.poll_close_notification = request.data['poll_close_notification']
+    notifications.meeting_set_creator_notification = request.data['meeting_set_creator_notification']
+    notifications.meeting_invitation = request.data['meeting_invitation']
+    notifications.cancel_meeting_notification = request.data['cancel_meeting_notification']
+
 def get_emails(participants):
     emails = []
     for participant in participants.iterator():
