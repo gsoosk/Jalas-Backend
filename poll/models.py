@@ -19,11 +19,15 @@ class MeetingPoll(models.Model):
 
 
 class PollChoiceItem(models.Model):
+    CHOICES_POLL= {
+        (1, 'AGREE'),
+        (2, 'DISAGREE'),
+        (3, 'AGREE_IFNEEDED')
+    }
     voter = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None)
     poll = models.ForeignKey('MeetingPoll', on_delete=models.CASCADE, default=None)
     chosen_time = models.ForeignKey('PollTime', on_delete=models.CASCADE, default=None)
-    agrees = models.BooleanField(default=False)
-
+    agrees = models.IntegerField(choices=CHOICES_POLL)
 
 class Comment(models.Model):
     user = models.ForeignKey('meetings.Participant', on_delete=models.CASCADE, default=None)
