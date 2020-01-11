@@ -308,7 +308,7 @@ def is_choice_in_values(choice, choices_value):
 def remove_not_included_choices(instance, choices_value):
     for choice in instance.choices.iterator():
         if not is_choice_in_values(choice, choices_value):
-            instance.remove(choice)
+            instance.choices.remove(choice)
             choice.delete()
     instance.save()
 
