@@ -2,13 +2,15 @@ from meetings.data.Room import Room
 import requests
 import json
 import re
+from meetings.models import Notifications, Participant
 from meetings import Exceptions
 from meetings.domain_logic.email_service import send_email
 import _thread as thread
 from report.domain_logic.Reports import ReportsData
 from report.data import repo
 from meetings.data.repo import create_meeting, cancel_meeting, get_meeting_status_by_id, \
-    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id, get_emails
+    check_if_participants_are_valid, get_participants_emails, get_meeting_info, get_meetings_by_id,\
+    get_emails, get_owner_notifications, update_notifications_fields
 import _thread as thread
 
 def is_time_valid(start, end):
@@ -94,6 +96,10 @@ def check_participants_valid(participants):
 
 
 def send_email_to_creator(start, end, room_name, creator_email):
+    email_user = Participant.objects.filter(email=creator_email)[0]
+    notif = Notifications.objects.filter(owner=email_user)[0]
+    if not notif.meeting_set_creator_notification:
+        return
     send_email("Meeting Notification", "There is going to be a meeting with following information:\nTime:"
                + start + " - "
                + end + "\nRoom: "
@@ -102,18 +108,28 @@ def send_email_to_creator(start, end, room_name, creator_email):
 
 def send_email_to_participants(start, end, room_name, participants, host, port, meeting_id):
     emails = get_participants_emails(participants)
-    send_email("Meeting Invitation", "There is going to be a meeting with following information:\nTime:"
-               + start + " - "
-               + end + "\nRoom: "
-               + room_name + "\nYou can view this meeting in the following URL:\n"
-               + "http://" + host + ":" + port + "/meetings/" + str(meeting_id), emails)
+    for email in emails:
+        email_user = Participant.objects.filter(email=email)[0]
+        notif = Notifications.objects.filter(owner=email_user)[0]
+        if not notif.meeting_invitation:
+            continue
+        send_email("Meeting Invitation", "There is going to be a meeting with following information:\nTime:"
+                   + start + " - "
+                   + end + "\nRoom: "
+                   + room_name + "\nYou can view this meeting in the following URL:\n"
+                   + "http://" + host + ":" + port + "/meetings/" + str(meeting_id), [email])
 
 
 def send_cancel_notification(participants, meeting_id):
     emails = get_emails(participants)
-    thread.start_new_thread(send_email, ("Meeting Cancelled", "A meeting you were invited to in cancelled:\n"
-               "\nYou can view this meeting in the following URL:\n"
-               + "http://http://localhost:3000/meetings/" + str(meeting_id), emails))
+    for email in emails:
+        email_user = Participant.objects.filter(email=email)[0]
+        notif = Notifications.objects.filter(owner=email_user)[0]
+        if not notif.cancel_meeting_notification:
+            continue
+        thread.start_new_thread(send_email, ("Meeting Cancelled", "A meeting you were invited to in cancelled:\n"
+                   "\nYou can view this meeting in the following URL:\n"
+                   + "http://http://localhost:3000/meetings/" + str(meeting_id), [email]))
 
 
 def send_email_thread(start, end, room_name, participants, host, port, meeting_id, creator_id):
@@ -162,6 +178,11 @@ def create_new_meeting(new_meeting, host, port):
 def get_meeting_details_by_id(meeting_id, user_id):
     return get_meeting_info(meeting_id, user_id)
 
+def get_notifications_by_user(user_id):
+    return get_owner_notifications(user_id)
+
+def update_notifications(notifications, request):
+    update_notifications_fields(notifications, request)
 
 def get_all_meetings_by_user_id(user_id):
     return get_meetings_by_id(user_id)

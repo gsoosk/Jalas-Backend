@@ -80,8 +80,6 @@ def vote_for_poll(request):
             return Response({"message": Exceptions.UPDATE_VOTED_MSG}, status.HTTP_200_OK)
         else:
             return Response({}, status.HTTP_200_OK)
-
-
     except Exceptions.NotParticipant:
         return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": Exceptions.PARTICIPANT_ERROR})
     except Exceptions.InvalidEmail:

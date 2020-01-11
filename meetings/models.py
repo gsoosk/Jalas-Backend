@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 
 class Room(models.Model):
@@ -22,6 +25,7 @@ class ParticipantManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
     def create_user(self, email, password=None, **extra_fields):
@@ -56,6 +60,22 @@ class Participant(AbstractUser):
     EMAIL_FIELD = 'email'
 
     objects = ParticipantManager()
+
+
+class Notifications(models.Model):
+    poll_creator_vote_notifications = models.BooleanField(default=True)
+    poll_contribution_invitation = models.BooleanField(default=True)
+    mention_notification = models.BooleanField(default=True)
+    poll_close_notification = models.BooleanField(default=True)
+    meeting_set_creator_notification = models.BooleanField(default=True)
+    meeting_invitation = models.BooleanField(default=True)
+    cancel_meeting_notification = models.BooleanField(default=True)
+    owner = models.ForeignKey('Participant', on_delete=models.CASCADE, default=None, related_name='notification_owner')
+
+@receiver(post_save, sender=Participant)
+def add_notifications_to_new_user(sender, instance, **kwargs):
+    user_notif = Notifications(owner=instance)
+    user_notif.save()
 
 
 class Meeting(models.Model):

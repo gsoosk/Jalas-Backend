@@ -3,11 +3,13 @@ from django.contrib import admin
 from .models import Meeting
 from .models import Room
 from .models import Participant
+from .models import Notifications
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
 admin.site.register(Meeting)
 admin.site.register(Room)
+admin.site.register(Notifications)
 @admin.register(Participant)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
