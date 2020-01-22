@@ -6,7 +6,7 @@ from meetings.domain_logic.meeting_service import create_new_meeting, cancel_roo
     get_meeting_details_by_id, get_all_meetings_by_user_id, get_notifications_by_user, update_notifications
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, LoginSerializer, NotificationSerializer
+from meetings.presentation.serializers import MeetingSerializer, MeetingInfoSerializer, SignupSerializer, NotificationSerializer
 from meetings import Exceptions
 from meetings.domain_logic.meeting_service import get_available_rooms_service
 from report.domain_logic.Reports import ReportsData
@@ -15,6 +15,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from meetings.models import Participant
 
 
 @api_view(['POST'])
@@ -46,6 +47,19 @@ def create_meeting(request):
 
         return Response({'id':meeting_id, 'reserved':reserved}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def signup(request):
+    try:
+        if request.data['is_staff'] == 'true' or request.data['is_staff']:
+            Participant.objects.create_superuser(request.data['username'], request.data['password'])
+        else:
+            Participant.objects.create_user(request.data['username'], request.data['password'])
+        return Response(status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'message':str(e)}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
 
 
 @api_view(['POST'])

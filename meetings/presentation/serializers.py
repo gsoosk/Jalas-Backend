@@ -14,6 +14,11 @@ class MeetingSerializer(serializers.HyperlinkedModelSerializer):
         model = Meeting
         fields = ['title', 'start_date_time', 'end_date_time', 'room_id', 'participants_id', 'id']
 
+class SignupSerializer(serializers.Serializer):
+    username = serializers.EmailField()
+    password = serializers.CharField(max_length=200)
+    is_staff = serializers.BooleanField()
+
 
 class RoomSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

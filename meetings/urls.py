@@ -11,6 +11,7 @@ urlpatterns = [
     path('all', views.get_meetings_list),#
     path('available', views.get_available_rooms),#
     path('cancel', views.cancel_reservation),
+    path('signup/', views.signup),
     # path('login', views.login),
     path('auth/', views.CustomAuthToken.as_view()),
     path('notificationsInfo', views.get_norifications_info),
